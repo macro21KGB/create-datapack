@@ -1,0 +1,20 @@
+{
+  "name": "@macro21kgb/create-datapack",
+  "version": "1.0.1",
+  "description": "A simple way to generate a Datapack",
+  "main": "bin/index.js",
+  "bin": {
+    "create-datapack": "bin/index.js"
+  },
+  "keywords": [
+    "datapack",
+    "cli",
+    "minecraft",
+    "mcfunction"
+  ],
+  "author": "macro21KGB",
+  "license": "",
+  "dependencies": {
+    "inquirer": "^8.1.2"
+  }
+}
