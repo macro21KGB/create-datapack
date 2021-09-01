@@ -1,0 +1,145 @@
+const fs = require("fs");
+const chalk = require("chalk");
+
+let defaultPackMCMeta = {
+  pack: {
+    pack_format: "",
+    description: "",
+  },
+};
+
+let defaultRootAdvancement = {
+  display: {
+    title: "Installed Datapacks",
+    description: "Installed Datapacks",
+    icon: {
+      item: "minecraft:knowledge_book",
+    },
+    background: "minecraft:textures/block/gray_concrete.png",
+    show_toast: false,
+    announce_to_chat: false,
+  },
+  criteria: {
+    trigger: {
+      trigger: "minecraft:tick",
+    },
+  },
+};
+
+let defaultUsernameAdvancement = {
+  display: {
+    title: "",
+    description: "",
+    icon: {
+      item: "minecraft:player_head",
+      nbt: "{SkullOwner:USERNAME}",
+    },
+    show_toast: false,
+    announce_to_chat: false,
+  },
+  parent: "global:root",
+  criteria: {
+    trigger: {
+      trigger: "minecraft:tick",
+    },
+  },
+};
+
+let defaultDatapackAdvancement = {
+  display: {
+    title: "PSTContainer 2",
+    description: "Use the power of the future to capture mob!",
+    icon: {
+      item: "minecraft:bedrock",
+    },
+    show_toast: false,
+    announce_to_chat: true,
+  },
+  parent: "global:macro21kgb",
+  criteria: {
+    trigger: {
+      trigger: "minecraft:tick",
+    },
+  },
+};
+
+let namespaceMinecraftConfig = {
+  replace: false,
+  values: ["pstc:load"],
+};
+
+exports.createMCMeta = (directory, version, description) => {
+  console.log(chalk.green("Generating MCMETA..."));
+
+  defaultPackMCMeta["pack"]["pack_format"] = +version;
+  defaultPackMCMeta["pack"]["description"] = description;
+
+  fs.writeFileSync(
+    process.cwd() + "\\" + directory + "\\pack.mcmeta",
+    JSON.stringify(defaultPackMCMeta)
+  );
+};
+
+exports.createGlobalAdvancements = (
+  directory,
+  username,
+  datpackName,
+  description
+) => {
+  console.log(chalk.green("Generating Global Advancements..."));
+  let currentDir = directory + "/global/advancements";
+
+  //Root advancement
+  fs.mkdirSync(currentDir, { recursive: true });
+  fs.writeFileSync(
+    currentDir + "/root.json",
+    JSON.stringify(defaultRootAdvancement)
+  );
+
+  //Username Advancement
+  defaultUsernameAdvancement.display.icon.nbt = `{SkullOwner: ${username}}`;
+  defaultUsernameAdvancement.display.title = username;
+  fs.writeFileSync(
+    currentDir + `/${username}.json`,
+    JSON.stringify(defaultUsernameAdvancement)
+  );
+
+  defaultDatapackAdvancement.display.title = datpackName;
+  defaultDatapackAdvancement.display.description = description;
+  defaultDatapackAdvancement.parent = `global:${username}`;
+  fs.writeFileSync(
+    currentDir + `/${datpackName.replace(/ /g, "_").toLowerCase()}.json`,
+    JSON.stringify(defaultDatapackAdvancement)
+  );
+};
+
+exports.createMinecraftTags = (directory, namespace) => {
+  console.log(chalk.green("Generating Minecraft Tag Functions..."));
+
+  let currentDir = directory + "/minecraft/tags/functions/";
+  fs.mkdirSync(currentDir, { recursive: true });
+
+  namespaceMinecraftConfig.values = [namespace + ":load"];
+  fs.writeFileSync(
+    currentDir + "load.json",
+    JSON.stringify(namespaceMinecraftConfig)
+  );
+
+  namespaceMinecraftConfig.values = [namespace + ":main"];
+  fs.writeFileSync(
+    currentDir + "tick.json",
+    JSON.stringify(namespaceMinecraftConfig)
+  );
+};
+
+exports.createMainFunctionFolder = (directory, namespace) => {
+  console.log(chalk.green("Generating Main Function files..."));
+	let currentDir = directory + `/${namespace}/functions/`;
+  fs.mkdirSync(currentDir, {
+    recursive: true
+  });
+
+	fs.writeFileSync(currentDir + "main.mcfunction", "say main");
+	fs.writeFileSync(currentDir + "load.mcfunction", "say load");
+
+};

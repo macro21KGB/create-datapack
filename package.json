@@ -10,7 +10,11 @@
     "datapack",
     "cli",
     "minecraft",
-    "mcfunction"
+    "mcfunction",
+    "mc",
+    "Datapack",
+    "Minecraft",
+    "minecraft datapack"
   ],
   "author": "macro21KGB",
   "license": "",
