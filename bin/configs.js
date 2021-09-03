@@ -132,14 +132,21 @@ exports.createMinecraftTags = (directory, namespace) => {
   );
 };
 
-exports.createMainFunctionFolder = (directory, namespace) => {
+exports.createMainFunctionFolder = (directory, namespace, usingTemplate, templateData) => {
   console.log(chalk.green("Generating Main Function files..."));
 	let currentDir = directory + `/${namespace}/functions/`;
   fs.mkdirSync(currentDir, {
     recursive: true
   });
 
-	fs.writeFileSync(currentDir + "main.mcfunction", "say main");
-	fs.writeFileSync(currentDir + "load.mcfunction", "say load");
+  if (!usingTemplate) {
+    fs.writeFileSync(currentDir + "main.mcfunction", "say main");
+    fs.writeFileSync(currentDir + "load.mcfunction", "say load");
+  }
+  else {
+    templateData.forEach(mcfunction => {
+      fs.writeFileSync(currentDir + mcfunction.file_name +".mcfunction", mcfunction.content);
+    });
+  }
 
 };

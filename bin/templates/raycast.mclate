@@ -1,0 +1,23 @@
+###Raycast + Right Click detection Coas
+
+<===main
+# Assign ID to all players
+execute as @a[tag=!pstc_tagged] run function NAMESPACE:assign_pstc_id
+
+execute as @a[tag=!ready_to_release, nbt={SelectedItem: {tag: {pstc: 1b,is_full: 0b}}}, scores={pstc_rc=1..}, limit=1] at @s anchored eyes run function NAMESPACE:raycast/shoot
+execute as @a[tag=ready_to_release, nbt={SelectedItem: {tag: {pstc: 1b,is_full: 1b}}}, scores={pstc_rc=1..}, limit=1] at @s anchored eyes run function NAMESPACE:release_mob
+
+execute as @a[scores={pstc_rc=1..}] at @s run scoreboard players set @s pstc_rc 0
+
+===>
+
+<===main2
+# Assign ID to all players
+execute as @a[tag=!pstc_tagged] run function NAMESPACE:assign_pstc_id
+
+execute as @a[tag=!ready_to_release, nbt={SelectedItem: {tag: {pstc: 1b,is_full: 0b}}}, scores={pstc_rc=1..}, limit=1] at @s anchored eyes run function NAMESPACE:raycast/shoot
+execute as @a[tag=ready_to_release, nbt={SelectedItem: {tag: {pstc: 1b,is_full: 1b}}}, scores={pstc_rc=1..}, limit=1] at @s anchored eyes run function NAMESPACE:release_mob
+
+execute as @a[scores={pstc_rc=1..}] at @s run scoreboard players set @s pstc_rc 0
+
+===>
