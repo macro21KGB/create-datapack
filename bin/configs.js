@@ -138,14 +138,14 @@ exports.createMinecraftTags = (directory, namespace) => {
 
 exports.createMainFunctionFolder = (directory, namespace, usingTemplate, templateData) => {
   let currentDir = directory + `/${namespace}/`;
-  fs.mkdirSync(currentDir, {
+  fs.mkdirSync(currentDir + "functions", {
     recursive: true
   });
 
   if (!usingTemplate) {
     console.log(chalk.green("Generating Main Function files..."));
-    fs.writeFileSync(currentDir + "/functions/main.mcfunction", "say main");
-    fs.writeFileSync(currentDir + "/functions/load.mcfunction", "say load");
+    fs.writeFileSync(currentDir + "functions/main.mcfunction", "say main");
+    fs.writeFileSync(currentDir + "functions/load.mcfunction", "say load");
   }
   else {
 
