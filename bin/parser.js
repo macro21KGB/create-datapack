@@ -29,7 +29,7 @@ exports.parseMCTemplate = (text, namespace) => {
 				'file_type': file_name.trim().replace("<===", "").split(":")[0],
 				'content': content.join("\n").replace(/NAMESPACE/g, namespace)
 			});
-			console.log(templateObject);
+
 			content = [];
 			file_name = '';
 			file_content = '';

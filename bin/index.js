@@ -134,6 +134,5 @@ function getTemplates(namespace) {
 
     templates.push(parser.parseMCTemplate(data.toString(), namespace));
   }
-  console.log(templates.files);
   return templates;
 }
