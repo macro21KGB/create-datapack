@@ -1,23 +1,164 @@
-###Raycast + Right Click detection Coas
+<###>Raycast + Headshot/Body shot Detection (Timber Forge)
 
-<===main
-# Assign ID to all players
-execute as @a[tag=!pstc_tagged] run function NAMESPACE:assign_pstc_id
+<===functions:load
+scoreboard objectives add tf_rc dummy
+scoreboard objectives add tf_detection minecraft.used:minecraft.carrot_on_a_stick
+===>
 
-execute as @a[tag=!ready_to_release, nbt={SelectedItem: {tag: {pstc: 1b,is_full: 0b}}}, scores={pstc_rc=1..}, limit=1] at @s anchored eyes run function NAMESPACE:raycast/shoot
-execute as @a[tag=ready_to_release, nbt={SelectedItem: {tag: {pstc: 1b,is_full: 1b}}}, scores={pstc_rc=1..}, limit=1] at @s anchored eyes run function NAMESPACE:release_mob
+<===functions:main
+execute as @a[scores={tf_detection=1..}] at @s run say CLICK
+execute as @a[scores={tf_detection=1..}] at @s run function enexp:start_raycast
+execute as @a[scores={tf_detection=1..}] at @s run scoreboard players set @s tf_detection 0
+===>
 
-execute as @a[scores={pstc_rc=1..}] at @s run scoreboard players set @s pstc_rc 0
+<===functions:start_raycast
+# Tag prevents current caster from being detected
+tag @s add raycasting
+
+# Anchor to the eyes and position with vector coordinates (Remove if not running from eyes of entity)
+execute anchored eyes positioned ^ ^ ^ run function NAMESPACE:raycast
+
+# Remove the raycasting tag after raycast completion to prepare fo the next player
+tag @s remove raycasting
+scoreboard players reset .distance tf_rc
+===>
+
+<===functions:raycast
+## Run from NAMESPACE:start_raycast
+
+# Using dx for precise hitbox detection
+# Parameters:
+#     Edit not_mob.json in tags/entities to change which entities will not be targetted
+#     Change the "positioned" offsets to change projectile size
+#       - If > 1 block, just use one dx detection
+execute as @e[tag=!raycasting,type=!#NAMESPACE:not_mob,dx=0] positioned ~-0.99 ~-0.99 ~-0.99 if entity @s[dx=0] positioned ~0.99 ~0.99 ~0.99 run function NAMESPACE:collide
+
+scoreboard players add .distance tf_rc 1
+
+# Make raycast visible
+particle minecraft:smoke ~ ~ ~ 0 0 0 0 0
+
+# Repeat the raycast if certain conditions are met
+# Parameters:
+#    (score after "matches") * (accuracy increment) = range
+#    The "positioned" value specifies the precision
+#    Edit raycast_pass.json in tags/blocks to change which blocks the raycast ignores
+#    "rotated" controls arc/curve of raycast path
+execute if score .distance tf_rc matches ..1000 positioned ^ ^ ^0.1 rotated ~ ~ if block ~ ~ ~ #NAMESPACE:raycast_pass run function NAMESPACE:raycast
 
 ===>
 
-<===main2
-# Assign ID to all players
-execute as @a[tag=!pstc_tagged] run function NAMESPACE:assign_pstc_id
 
-execute as @a[tag=!ready_to_release, nbt={SelectedItem: {tag: {pstc: 1b,is_full: 0b}}}, scores={pstc_rc=1..}, limit=1] at @s anchored eyes run function NAMESPACE:raycast/shoot
-execute as @a[tag=ready_to_release, nbt={SelectedItem: {tag: {pstc: 1b,is_full: 1b}}}, scores={pstc_rc=1..}, limit=1] at @s anchored eyes run function NAMESPACE:release_mob
+<===functions:collide
+## Called from NAMESPACE:raycast upon any targets whose hitbox collides with the raycast
 
-execute as @a[scores={pstc_rc=1..}] at @s run scoreboard players set @s pstc_rc 0
+#### What you do to the target is up to you
 
+# Detect Headshots/bodyshots/legshots
+execute positioned ~ ~0.35 ~ unless entity @s[dx=0] positioned ~ ~-0.3 ~ run say headshot
+
+execute positioned ~ ~0.35 ~ if entity @s[dx=0] positioned ~ ~-2.3 ~ if entity @s[dx=0] run say chest shot
+
+execute positioned ~ ~-1.95 ~ unless entity @s[dx=0] run say leg shot
+
+say I have been hit by a raycast. oof
+particle explosion ~ ~ ~ 0 0 0 0 5
+kill @s
+
+#### Max out range to end the raycast
+scoreboard players set .distance tf_rc 1000
+===>
+
+
+<===tags/blocks:raycast_pass
+{
+    "values":[
+    "minecraft:air",
+    "minecraft:void_air",
+    "minecraft:cave_air",
+    "minecraft:water",
+    "minecraft:lava",
+    "minecraft:grass",
+ "#minecraft:small_flowers",
+ "#minecraft:tall_flowers",
+ "#minecraft:small_dripleaf_placeable",
+    "minecraft:fern",
+    "minecraft:fire",
+    "minecraft:tall_grass",
+    "minecraft:large_fern",
+    "minecraft:vine",
+    "minecraft:twisting_vines",
+    "minecraft:twisting_vines_plant",
+    "minecraft:weeping_vines",
+    "minecraft:weeping_vines_plant",
+ "#minecraft:crops",
+ "#minecraft:saplings",
+ "#minecraft:signs",
+    "minecraft:attached_melon_stem",
+    "minecraft:attached_pumpkin_stem",
+    "minecraft:nether_wart",
+    "minecraft:sweet_berry_bush",
+    "minecraft:cocoa",
+    "minecraft:sugar_cane",
+    "minecraft:seagrass",
+    "minecraft:tall_seagrass",
+    "minecraft:redstone_wire",
+    "minecraft:rail",
+    "minecraft:powered_rail",
+    "minecraft:activator_rail",
+    "minecraft:detector_rail",
+    "minecraft:torch",
+    "minecraft:soul_torch",
+    "minecraft:redstone_torch",
+    "minecraft:glow_lichen"
+    ]
+}
+===>
+
+
+<===tags/entity_types:not_mob
+{
+  "replace": false,
+  "values": [
+    "minecraft:item",
+    "minecraft:item_frame",
+    "minecraft:glow_item_frame",
+    "minecraft:area_effect_cloud",
+    "minecraft:armor_stand",
+    "minecraft:arrow",
+    "minecraft:boat",
+    "minecraft:dragon_fireball",
+    "minecraft:egg",
+    "minecraft:evoker_fangs",
+    "minecraft:falling_block",
+    "minecraft:fireball",
+    "minecraft:firework_rocket",
+    "minecraft:lightning_bolt",
+    "minecraft:ender_pearl",
+    "minecraft:small_fireball",
+    "minecraft:eye_of_ender",
+    "minecraft:potion",
+    "minecraft:firework_rocket",
+    "minecraft:leash_knot",
+    "minecraft:llama_spit",
+    "minecraft:painting",
+    "minecraft:shulker_bullet",
+    "minecraft:snowball",
+    "minecraft:spectral_arrow",
+    "minecraft:trident",
+    "minecraft:tnt",
+    "minecraft:falling_block",
+    "minecraft:minecart",
+    "minecraft:command_block_minecart",
+    "minecraft:furnace_minecart",
+    "minecraft:spawner_minecart",
+    "minecraft:hopper_minecart",
+    "minecraft:chest_minecart",
+    "minecraft:tnt_minecart",
+    "minecraft:wither_skull",
+    "minecraft:experience_orb",
+    "minecraft:marker",
+    "minecraft:experience_bottle"
+  ]
+}
 ===>

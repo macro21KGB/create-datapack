@@ -61,12 +61,15 @@ inquirer
   .prompt(questions)
   .then((answers) => {
 
+    //If using a tempalte, get the templates from the file in the templates folder
     if (answers.usingTemplate) {
-      console.log("GETTING TEMPLATES");
-      const templates = getTemplates();
+
+      console.log(chalk.blue("To edit the templates, go to: " + chalk.bold(__dirname + "\\templates")));
+
+      //Get the templates
+      const templates = getTemplates(answers.nameSpace);
 
       let choices = [];
-
       templates.forEach((template) => {
         choices.push({
           name: template.title,
@@ -83,22 +86,14 @@ inquirer
           name: "templateInUse",
         })
         .then((templateData) => {
-          console.log(answers);
-          console.log(templateData);
-
-          generateDirectoryStructure(answers, templateData);
+          generateDirectoryStructure(answers, templateData.templateInUse);
         });
     } else {
-      console.log("NORMALE");
       generateDirectoryStructure(answers, null);
     }
   })
   .catch((error) => {
-    if (error.isTtyError) {
-      // Prompt couldn't be rendered in the current environment
-    } else {
-      // Something else went wrong
-    }
+    console.log(error);
   });
 
 function generateDirectoryStructure(data, templateData) {
@@ -114,16 +109,20 @@ function generateDirectoryStructure(data, templateData) {
 
   configs.createMinecraftTags(baseDir, data.nameSpace);
 
-  if ( templateData === null)
+  if (templateData === null)
     configs.createMainFunctionFolder(baseDir, data.nameSpace, false, null);
-  else 
-    configs.createMainFunctionFolder(baseDir, data.nameSpace, true, templateData);
-
+  else
+    configs.createMainFunctionFolder(
+      baseDir,
+      data.nameSpace,
+      true,
+      templateData
+    );
 
   console.log(chalk.green("✔ All Done!"));
 }
 
-function getTemplates() {
+function getTemplates(namespace) {
   let templates = [];
   const fromDirectory = __dirname + "\\templates";
 
@@ -133,7 +132,8 @@ function getTemplates() {
 
     const data = fs.readFileSync(fromPath);
 
-    templates.push(parser.parseMCTemplate(data.toString()));
+    templates.push(parser.parseMCTemplate(data.toString(), namespace));
   }
+  console.log(templates.files);
   return templates;
 }

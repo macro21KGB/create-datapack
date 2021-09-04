@@ -47,15 +47,15 @@ let defaultUsernameAdvancement = {
 
 let defaultDatapackAdvancement = {
   display: {
-    title: "PSTContainer 2",
-    description: "Use the power of the future to capture mob!",
+    title: "",
+    description: "",
     icon: {
       item: "minecraft:bedrock",
     },
     show_toast: false,
     announce_to_chat: true,
   },
-  parent: "global:macro21kgb",
+  parent: "global:USERNAME",
   criteria: {
     trigger: {
       trigger: "minecraft:tick",
@@ -65,9 +65,10 @@ let defaultDatapackAdvancement = {
 
 let namespaceMinecraftConfig = {
   replace: false,
-  values: ["pstc:load"],
+  values: ["NAMESPACE:load/main"],
 };
 
+//Creating pack.MCMeta file
 exports.createMCMeta = (directory, version, description) => {
   console.log(chalk.green("Generating MCMETA..."));
 
@@ -80,6 +81,7 @@ exports.createMCMeta = (directory, version, description) => {
   );
 };
 
+//creating cross datapack advancements
 exports.createGlobalAdvancements = (
   directory,
   username,
@@ -104,6 +106,7 @@ exports.createGlobalAdvancements = (
     JSON.stringify(defaultUsernameAdvancement)
   );
 
+  //Datapack Advancement
   defaultDatapackAdvancement.display.title = datpackName;
   defaultDatapackAdvancement.display.description = description;
   defaultDatapackAdvancement.parent = `global:${username}`;
@@ -113,6 +116,7 @@ exports.createGlobalAdvancements = (
   );
 };
 
+//Creating minecraft/tags/functions for the tick and load functionality
 exports.createMinecraftTags = (directory, namespace) => {
   console.log(chalk.green("Generating Minecraft Tag Functions..."));
 
@@ -133,19 +137,28 @@ exports.createMinecraftTags = (directory, namespace) => {
 };
 
 exports.createMainFunctionFolder = (directory, namespace, usingTemplate, templateData) => {
-  console.log(chalk.green("Generating Main Function files..."));
-	let currentDir = directory + `/${namespace}/functions/`;
+  let currentDir = directory + `/${namespace}/`;
   fs.mkdirSync(currentDir, {
     recursive: true
   });
 
   if (!usingTemplate) {
-    fs.writeFileSync(currentDir + "main.mcfunction", "say main");
-    fs.writeFileSync(currentDir + "load.mcfunction", "say load");
+    console.log(chalk.green("Generating Main Function files..."));
+    fs.writeFileSync(currentDir + "/functions/main.mcfunction", "say main");
+    fs.writeFileSync(currentDir + "/functions/load.mcfunction", "say load");
   }
   else {
+
+    console.log(chalk.green("Generating Main Function files from Templates..."));
     templateData.forEach(mcfunction => {
-      fs.writeFileSync(currentDir + mcfunction.file_name +".mcfunction", mcfunction.content);
+      let selectedFolder = currentDir + mcfunction.file_type + "/";
+      let extension = mcfunction.file_type === "functions" ? ".mcfunction" : ".json";
+      fs.mkdirSync(selectedFolder, {
+        recursive: true
+      });
+
+      console.log(chalk.green(`\tGenerating ${mcfunction.file_name}`));
+      fs.writeFileSync(selectedFolder + mcfunction.file_name + extension , mcfunction.content);
     });
   }
 

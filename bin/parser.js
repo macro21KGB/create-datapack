@@ -1,8 +1,8 @@
 
 
-exports.parseMCTemplate = (text) => {
+exports.parseMCTemplate = (text, namespace) => {
 	let file_content = text.split("\n");
-	const title = (file_content[0] != "" ? file_content[0] : "UNDEFINED").replace("###", "");
+	const title = (file_content[0] != "" ? file_content[0] : "UNDEFINED").replace("<###>", "");
 
 	let templateObject = {
 		'title': title,
@@ -19,16 +19,17 @@ exports.parseMCTemplate = (text) => {
 			file_name = line.replace("<===", "");
 			is_reading_content = true;
 		}
-		if (is_reading_content && !line.startsWith("===>") && !line.startsWith("<===")) {	
+		if (is_reading_content && !line.startsWith("===>") && !line.startsWith("<===")) {
 			content.push(line);
 		}
 		if (is_reading_content && line.startsWith("===>")) {
 			templateObject.files.push({
 				'id': Date.now(),
-				'file_name': file_name.trim().replace("<===", ""),
-				'content': content.join("\n")
+				'file_name': file_name.trim().replace("<===", "").split(":")[1],
+				'file_type': file_name.trim().replace("<===", "").split(":")[0],
+				'content': content.join("\n").replace(/NAMESPACE/g, namespace)
 			});
-			
+			console.log(templateObject);
 			content = [];
 			file_name = '';
 			file_content = '';
@@ -36,5 +37,6 @@ exports.parseMCTemplate = (text) => {
 		}
 
 	});
+
 	return templateObject;
 }
