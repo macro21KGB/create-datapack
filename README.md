@@ -20,8 +20,58 @@ or
 npx create-datapack
 ```
 
-### Road Map
-* [X]Quality of life update and tweak to the UI **[WIP]**
-* [ ]template with raycast + right click detection starter
-* [ ]template with loot tables starter
-* ...
+## Template System (.mclate)
+```
+<###>Test Template <-- name of the template
+
+<===functions:load  <-- location of the file : name of the function without extension (auto-added)
+scoreboard objectives add tf_rc dummy
+scoreboard objectives add tf_detection minecraft.used:minecraft.carrot_on_a_stick
+===>
+
+<===functions:main
+execute as @a[scores={tf_detection=1..}] at @s run say CLICK
+execute as @a[scores={tf_detection=1..}] at @s run function enexp:start_raycast
+execute as @a[scores={tf_detection=1..}] at @s run scoreboard players set @s tf_detection 0
+===>
+
+<===functions/test/subfolder:test  <-- you can create sub-folder easily like that
+say super duper test
+===>
+
+<===tags/blocks:passable_blocks  <-- NOT only functions!
+{
+  "values":[
+    "minecraft:air",
+    "minecraft:void_air",
+    "minecraft:cave_air",
+    "minecraft:water",
+    "minecraft:lava",
+    "minecraft:grass"
+}
+===>
+
+
+```
+#### Delimiters for the custom template
+Name of the template
+```
+<###>This is the Name of the Template
+```
+
+File start and end **markers** (you can obviously create multiple files in a template):
+```
+<===file_location/folder:name_of_the_file   <-- start of a file
+
+===> <-- end of the file
+```
+
+
+#### Info
+You can create all possible files with this system, The **location in the datapack folder structure** part is without error handling so be careful.
+
+All the folder paths can be found on the [wiki](https://minecraft.fandom.com/wiki/Data_Pack) and as shown in the example you can create sub folders and **extensions are added automatically**
+
+##### Where can i found the templates folder?
+When you are going to use a template, the path to the templates folder will appear inside the CLI, go to the indicated path and add or modify whatever you want.
+(Remember to save your templates somewhere else, in case of an update)
