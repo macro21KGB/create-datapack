@@ -2,10 +2,10 @@
 
 This very simple CLI can generate a default data pack folder structure, while also generating global advancements that allow the pack to integrate with other datapacks.
 
- [You can check the datapack conventions here](https://ooboomberoo.github.io/mcdatapacks-wiki/conventions/datapack_advancement.html)
+ [**You can check the datapack conventions here**](https://ooboomberoo.github.io/mcdatapacks-wiki/conventions/datapack_advancement.html)
 
 ## Usage
-[Install nodejs](https://nodejs.org)
+[**Install nodejs**](https://nodejs.org)
 
 then type in your **terminal** to install the CLI globally:
 ```
@@ -21,6 +21,7 @@ npx create-datapack
 ```
 
 ## Template System (.mclate)
+The templates are written in a **custom language**, it is very **simple** and **easy to use**, below there is an example of everything you can do:
 ```
 <###>Test Template <-- name of the template
 
@@ -53,7 +54,7 @@ say super duper test
 
 
 ```
-#### Delimiters for the custom template
+### Delimiters for the custom template
 Name of the template
 ```
 <###>This is the Name of the Template
@@ -67,11 +68,11 @@ File start and end **markers** (you can obviously create multiple files in a tem
 ```
 
 
-#### Info
+### Info
 You can create all possible files with this system, The **location in the datapack folder structure** part is without error handling so be careful.
 
 All the folder paths can be found on the [wiki](https://minecraft.fandom.com/wiki/Data_Pack) and as shown in the example you can create sub folders and **extensions are added automatically**
 
-##### Where can i found the templates folder?
+### Where can i found the templates folder?
 When you are going to use a template, the path to the templates folder will appear inside the CLI, go to the indicated path and add or modify whatever you want.
-(Remember to save your templates somewhere else, in case of an update)
+
