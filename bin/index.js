@@ -6,6 +6,7 @@ const chalk = require("chalk");
 const configs = require("./configs");
 const path = require("path");
 const parser = require("./parser");
+const os = require("os");
 
 const questions = [
   {
@@ -60,11 +61,14 @@ console.log(chalk.blue("Current Path: " + chalk.bold(process.cwd())));
 inquirer
   .prompt(questions)
   .then((answers) => {
-
     //If using a tempalte, get the templates from the file in the templates folder
     if (answers.usingTemplate) {
-
-      console.log(chalk.blue("To edit the templates, go to: " + chalk.bold(__dirname + "\\templates")));
+      console.log(
+        chalk.blue(
+          "To edit the templates, go to: " +
+            chalk.bold(os.homedir() + "\\datapack-templates")
+        )
+      );
 
       //Get the templates
       const templates = getTemplates(answers.nameSpace);
@@ -125,14 +129,35 @@ function generateDirectoryStructure(data, templateData) {
 function getTemplates(namespace) {
   let templates = [];
   const fromDirectory = __dirname + "\\templates";
+  const fromCustomDirectory = path.join(os.homedir(), "datapack-templates");
 
-  const files = fs.readdirSync(fromDirectory);
-  for (const file of files) {
-    const fromPath = path.join(fromDirectory, file);
+  //Load template file from Inner Configs
+  templates.push(...readTemplateFile(fromDirectory, namespace));
+
+  //If a custom folder exists, use the templates located there too
+  if (fs.existsSync(fromCustomDirectory)) {
+    templates.push(...readTemplateFile(fromCustomDirectory, namespace));
+  }
+  else {
+    //Generate the folder is it doesn't exists
+    fs.mkdirSync(fromCustomDirectory, {recursive: true});
+    console.log(chalk.blue("Custom Templates Folder Generated in: " + fromCustomDirectory));
+  }
+
+  return templates;
+}
+
+function readTemplateFile(directory, namespace) {
+  let files = [];
+
+  const templateFiles = fs.readdirSync(directory);
+  for (const file of templateFiles) {
+    const fromPath = path.join(directory, file);
 
     const data = fs.readFileSync(fromPath);
 
-    templates.push(parser.parseMCTemplate(data.toString(), namespace));
+    files.push(parser.parseMCTemplate(data.toString(), namespace));
   }
-  return templates;
+
+  return files.length > 0 ? files : [];
 }

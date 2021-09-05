@@ -157,7 +157,7 @@ exports.createMainFunctionFolder = (directory, namespace, usingTemplate, templat
         recursive: true
       });
 
-      console.log(chalk.green(`\tGenerating ${mcfunction.file_name}`));
+      console.log(chalk.green(`\tGenerating ${mcfunction.file_type}/${mcfunction.file_name}${extension}`));
       fs.writeFileSync(selectedFolder + mcfunction.file_name + extension , mcfunction.content);
     });
   }
