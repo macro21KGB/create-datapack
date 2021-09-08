@@ -9,7 +9,7 @@ This very simple CLI can generate a default data pack folder structure, while al
 
 then type in your **terminal** to install the CLI globally:
 ```
-npm i -g @macro21kgb@create-datapack
+npm i -g @macro21kgb/create-datapack
 ```
 After that you can create a new datapack in the current directory with
 ```
