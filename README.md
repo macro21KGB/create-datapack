@@ -32,7 +32,7 @@ scoreboard objectives add tf_detection minecraft.used:minecraft.carrot_on_a_stic
 
 <===functions:main
 execute as @a[scores={tf_detection=1..}] at @s run say CLICK
-execute as @a[scores={tf_detection=1..}] at @s run function enexp:start_raycast
+execute as @a[scores={tf_detection=1..}] at @s run function NAMESPACE:start_raycast
 execute as @a[scores={tf_detection=1..}] at @s run scoreboard players set @s tf_detection 0
 ===>
 
@@ -66,7 +66,14 @@ File start and end **markers** (you can obviously create multiple files in a tem
 
 ===> <-- end of the file
 ```
-
+When executing function and you need the namespace of the datapack, set it like this (use **NAMESPACE**):
+```elixir
+<===functions:main
+execute as @a[scores={tf_detection=1..}] at @s run say CLICK
+execute as @a[scores={tf_detection=1..}] at @s run function NAMESPACE:start_raycast <-- the namespace is taken automatically
+execute as @a[scores={tf_detection=1..}] at @s run scoreboard players set @s tf_detection 0
+===>
+```
 
 ### Info
 You can create all possible files with this system, The **location in the datapack folder structure** part is without error handling so be careful.
