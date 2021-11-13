@@ -7,7 +7,7 @@ scoreboard objectives add tf_detection minecraft.used:minecraft.carrot_on_a_stic
 
 <===functions:main
 execute as @a[scores={tf_detection=1..}] at @s run say CLICK
-execute as @a[scores={tf_detection=1..}] at @s run function enexp:start_raycast
+execute as @a[scores={tf_detection=1..}] at @s run function NAMESPACE:start_raycast
 execute as @a[scores={tf_detection=1..}] at @s run scoreboard players set @s tf_detection 0
 ===>
 

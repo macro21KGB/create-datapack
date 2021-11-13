@@ -1,5 +1,10 @@
 
-
+/**
+ * 
+ * @param {string} text  file content
+ * @param {string} namespace namespace of the datapack
+ * @returns parse the .mclate file and return the parsed data
+ */
 exports.parseMCTemplate = (text, namespace) => {
 	let file_content = text.split("\n");
 	const title = (file_content[0] != "" ? file_content[0] : "UNDEFINED").replace("<###>", "");
