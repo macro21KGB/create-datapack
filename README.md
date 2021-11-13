@@ -20,7 +20,15 @@ or
 npx create-datapack
 ```
 
-## Template System (.mclate)
+# NEW MODULES FEATURES
+Now with this command you can access different modules for any occasion (one for now...)
+
+This module is the **Auto-uninstaller**, that will scan your datapack an create an **uninstall.mcfunction** just for you, (run it in the root directory, where is the pack.mcmeta file)
+```
+create-datapack -m
+```
+
+# Template System (.mclate)
 The templates are written in a **custom language**, it is very **simple** and **easy to use**, below there is an example of everything you can do:
 ```
 <###>Test Template <-- name of the template
