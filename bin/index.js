@@ -10,8 +10,6 @@ const os = require("os");
 const moduleArgsParser = require("./modulesArgsParser");
 const { exit } = require("process");
 
-// modules args parser
-
 // questions for generating the datapack
 const questions = [
   {
@@ -63,6 +61,7 @@ const questions = [
 
 console.log(chalk.blue("Current Path: " + chalk.bold(process.cwd())));
 
+// if the argument is not empty, open the module screen
 if (process.argv.length > 2 && process.argv[2] === "-m") {
   moduleArgsParser.runWithInquirer();
 } else {
@@ -108,6 +107,11 @@ if (process.argv.length > 2 && process.argv[2] === "-m") {
       console.log(error);
     });
 
+  /**
+   *
+   * @param {Object} data
+   * @param {any} templateData
+   */
   function generateDirectoryStructure(data, templateData) {
     const baseDir = "./" + data.datapackName + "/data";
     fs.mkdirSync(baseDir, { recursive: true });

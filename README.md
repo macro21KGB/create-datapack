@@ -2,34 +2,46 @@
 
 This very simple CLI can generate a default data pack folder structure, while also generating global advancements that allow the pack to integrate with other datapacks.
 
- [**You can check the datapack conventions here**](https://ooboomberoo.github.io/mcdatapacks-wiki/conventions/datapack_advancement.html)
+[**You can check the datapack conventions here**](https://ooboomberoo.github.io/mcdatapacks-wiki/conventions/datapack_advancement.html)
 
 ## Usage
+
 [**Install nodejs**](https://nodejs.org)
 
 then type in your **terminal** to install the CLI globally:
+
 ```
 npm i -g @macro21kgb/create-datapack
 ```
+
 After that you can create a new datapack in the current directory with
+
 ```
 create-datapack
 ```
+
 or
+
 ```
 npx create-datapack
 ```
 
 # NEW MODULES FEATURES
-Now with this command you can access different modules for any occasion (one for now...)
 
-This module is the **Auto-uninstaller**, that will scan your datapack an create an **uninstall.mcfunction** just for you, (run it in the root directory, where is the pack.mcmeta file)
+Now with this command you can access different modules for any occasion
+
+- The **Auto-uninstaller**,It will scan your datapack an create an **uninstall.mcfunction** just for you, (run it in the root directory, where is the pack.mcmeta file)
+
+- The **Floor-Crafting-Recipe (WIP)**, It will generate a floor crafting recipe in the main.mcfunction file (default)
+
 ```
 create-datapack -m
 ```
 
 # Template System (.mclate)
+
 The templates are written in a **custom language**, it is very **simple** and **easy to use**, below there is an example of everything you can do:
+
 ```
 <###>Test Template <-- name of the template
 
@@ -62,19 +74,25 @@ say super duper test
 
 
 ```
+
 ### Delimiters for the custom template
+
 Name of the template
+
 ```
 <###>This is the Name of the Template
 ```
 
 File start and end **markers** (you can obviously create multiple files in a template):
+
 ```
 <===file_location/folder:name_of_the_file   <-- start of a file
 
 ===> <-- end of the file
 ```
+
 When executing function and you need the namespace of the datapack, set it like this (use **NAMESPACE**):
+
 ```elixir
 <===functions:main
 execute as @a[scores={tf_detection=1..}] at @s run say CLICK
@@ -84,10 +102,11 @@ execute as @a[scores={tf_detection=1..}] at @s run scoreboard players set @s tf_
 ```
 
 ### Info
+
 You can create all possible files with this system, The **location in the datapack folder structure** part is without error handling so be careful.
 
 All the folder paths can be found on the [wiki](https://minecraft.fandom.com/wiki/Data_Pack) and as shown in the example you can create sub folders and **extensions are added automatically**
 
 ### Where can i found the templates folder?
-When you are going to use a template, the path to the templates folder will appear inside the CLI, go to the indicated path and add or modify whatever you want.
 
+When you are going to use a template, the path to the templates folder will appear inside the CLI, go to the indicated path and add or modify whatever you want.

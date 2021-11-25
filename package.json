@@ -20,6 +20,8 @@
   "license": "",
   "dependencies": {
     "inquirer": "^8.1.2",
+    "inquirer-file-path": "^1.0.1",
+    "inquirer-folder-explorer": "^2.0.0",
     "yargs": "^17.2.1"
   }
 }

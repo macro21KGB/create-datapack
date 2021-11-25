@@ -27,7 +27,7 @@ const getFiles = (dir, files_) => {
 };
 
 /**
- *
+ *  Scan the files for searching entity to delete
  * @param {Array<string>} files
  * @returns {Array<string>}
  */
@@ -62,27 +62,29 @@ const scanFiles = (files) => {
       }
     }
   }
-  console.log(entitiesToDelete);
   return result.concat(entitiesToDelete);
 };
 
-const generateUninstaller = () => {};
-
 const run = () => {
-  console.log(process.cwd());
   // controlla se è presente un file con estensione .mcmeta, se è presente lo ritorna true, altrimenti false
   const isMeta = fs.existsSync(`${process.cwd()}/pack.mcmeta`);
 
   if (isMeta) {
-    console.log("Uninstaller: found pack.mcmeta");
-    const files = getFiles(process.cwd());
+    console.log(chalk.green("Uninstaller: found pack.mcmeta"));
+    const files = getFiles(process.cwd(), []);
     const results = scanFiles(files);
     const namespace = files[0]
       .match(/data[/\\]([a-zA-Z_\-+0-9])+/g)[0]
       .split("/")[1];
-    const fileName = `${process.cwd()}/data/${namespace}/functions/uninstaller.mcfunction`;
-    fs.writeFileSync(fileName, results.join("\n"));
-    console.log(chalk.green(`Uninstaller: generated ${chalk.bold(fileName)}`));
+    try {
+      const fileName = `${process.cwd()}/data/${namespace}/functions/uninstaller.mcfunction`;
+      fs.writeFileSync(fileName, results.join("\n"));
+      console.log(
+        chalk.green(`Uninstaller: generated ${chalk.bold(fileName)}`)
+      );
+    } catch (error) {
+      console.log(chalk.red(`Uninstaller Failed to generate file: ${error}`));
+    }
   } else {
     console.log(
       chalk.red(

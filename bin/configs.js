@@ -3,7 +3,7 @@ const chalk = require("chalk");
 
 let defaultPackMCMeta = {
   pack: {
-    pack_format: "",
+    pack_format: 0,
     description: "",
   },
 };
@@ -136,30 +136,42 @@ exports.createMinecraftTags = (directory, namespace) => {
   );
 };
 
-exports.createMainFunctionFolder = (directory, namespace, usingTemplate, templateData) => {
+exports.createMainFunctionFolder = (
+  directory,
+  namespace,
+  usingTemplate,
+  templateData
+) => {
   let currentDir = directory + `/${namespace}/`;
   fs.mkdirSync(currentDir + "functions", {
-    recursive: true
+    recursive: true,
   });
 
   if (!usingTemplate) {
     console.log(chalk.green("Generating Main Function files..."));
     fs.writeFileSync(currentDir + "functions/main.mcfunction", "say main");
     fs.writeFileSync(currentDir + "functions/load.mcfunction", "say load");
-  }
-  else {
-
-    console.log(chalk.green("Generating Main Function files from Templates..."));
-    templateData.forEach(mcfunction => {
+  } else {
+    console.log(
+      chalk.green("Generating Main Function files from Templates...")
+    );
+    templateData.forEach((mcfunction) => {
       let selectedFolder = currentDir + mcfunction.file_type + "/";
-      let extension = mcfunction.file_type === "functions" ? ".mcfunction" : ".json";
+      let extension =
+        mcfunction.file_type === "functions" ? ".mcfunction" : ".json";
       fs.mkdirSync(selectedFolder, {
-        recursive: true
+        recursive: true,
       });
 
-      console.log(chalk.green(`\tGenerating ${mcfunction.file_type}/${mcfunction.file_name}${extension}`));
-      fs.writeFileSync(selectedFolder + mcfunction.file_name + extension , mcfunction.content);
+      console.log(
+        chalk.green(
+          `\tGenerating ${mcfunction.file_type}/${mcfunction.file_name}${extension}`
+        )
+      );
+      fs.writeFileSync(
+        selectedFolder + mcfunction.file_name + extension,
+        mcfunction.content
+      );
     });
   }
-
 };

@@ -6,9 +6,18 @@ const modules = {
     const module = require("./modules/auto-uninstaller");
     module.run();
   },
+  "floor-crafting-recipe": () => {
+    const module = require("./modules/floor-crafting-recipe");
+    module.run();
+  },
 };
 
-const generateListOfModules = () => {
+/**
+ *
+ * @param {Object} modules
+ * @returns {Array<{name: string, value:string}>} lista di nomi dei moduli
+ */
+const generateListOfModules = (modules) => {
   const list = [];
   for (const key in modules) {
     if (modules.hasOwnProperty(key)) {
@@ -18,6 +27,7 @@ const generateListOfModules = () => {
   return list;
 };
 
+// execute the module
 const executeModule = (moduleName) => {
   if (modules[moduleName]) {
     console.log(chalk.blue(`Executing module: ${chalk.bold(moduleName)}`));
@@ -28,10 +38,8 @@ const executeModule = (moduleName) => {
 };
 
 // create a list using inquirer with the list of modules
-// ask for the module name
-// execute the module
 const runWithInquirer = () => {
-  const list = generateListOfModules();
+  const list = generateListOfModules(modules);
   inquirer
     .prompt([
       {
@@ -48,5 +56,5 @@ const runWithInquirer = () => {
 
 module.exports = {
   executeModule,
-  runWithInquirer
+  runWithInquirer,
 };
