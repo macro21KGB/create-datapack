@@ -23,7 +23,7 @@ const getFiles = (dir, files_) => {
       }
     }
   }
-  return files_;
+  return deleteDuplicates(files_);
 };
 
 /**
@@ -71,11 +71,13 @@ const run = () => {
 
   if (isMeta) {
     console.log(chalk.green("Uninstaller: found pack.mcmeta"));
+
     const files = getFiles(process.cwd(), []);
     const results = scanFiles(files);
     const namespace = files[0]
       .match(/data[/\\]([a-zA-Z_\-+0-9])+/g)[0]
       .split("/")[1];
+
     try {
       const fileName = `${process.cwd()}/data/${namespace}/functions/uninstaller.mcfunction`;
       fs.writeFileSync(fileName, results.join("\n"));
@@ -92,6 +94,16 @@ const run = () => {
       )
     );
   }
+};
+
+/**
+ *
+ * @param {string[]} array
+ * @returns
+ */
+// delete duplicates from array
+const deleteDuplicates = (array) => {
+  return array.filter((item, index) => array.indexOf(item) === index);
 };
 
 module.exports = {
