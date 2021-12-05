@@ -51,6 +51,66 @@ const getInputFromEditor = (defaultMessage, callback) => {
   return true;
 };
 
+// turn:
+// give @p carrot_on_a_stick{display:{Name:'{"text":"TEST","bold":true}'},Unbreakable:1b,test1:1b} 1
+// into:
+// summon item ~ ~ ~ {Item:{id:"minecraft:carrot",Count:1b,tag:{display:{Name:'{"text":"TEST","bold":true}'},test1:1b}}}
+
+/**
+ * convert a give command into a summon command
+ * @param {string} giveCommand
+ * @returns the summon command generated from the give command
+ */
+const convertGiveCommandToSummonCommand = (giveCommand) => {
+  const itemToSummon = giveCommand.split(" ")[2];
+  const regex = /([a-zA-Z_:]+)(.*)/g;
+  const match = regex.exec(itemToSummon);
+
+  try {
+    const itemName = match[1];
+    const itemNBT = match[2];
+    const itemCount = giveCommand.split(" ")[3];
+
+    if (itemNBT === "" || itemNBT === undefined) {
+      return `summon item ~ ~ ~ {Item:{id:"minecraft:${normalizeMinecraftID(
+        itemName
+      )}",Count:${itemCount}b}}`;
+    } else {
+      return `summon item ~ ~ ~ {Item:{id:"minecraft:${normalizeMinecraftID(
+        itemName
+      )}",Count:${itemCount}b,tag:${itemNBT}}}`;
+    }
+  } catch (e) {
+    showRedMessage("Error: Syntax error in the give command");
+    return "ERROR";
+  }
+};
+
+//TODO: make test for this function
+/**
+ *
+ * @param {string} summonCommand summon command to convert into a give command
+ * @param {string} selector selector to use in the give command (default: "@s")
+ * @returns the give command generated from the summon command
+ */
+const convertSummonCommandToGiveCommand = (summonCommand, selector) => {
+  const regex = /summon item ~ ~ ~ {Item:{id:"(.*?)",Count:(.*?)b(.*?)}}/g;
+  const match = regex.exec(summonCommand);
+  const itemName = match[1];
+  const itemCount = match[2];
+  const itemNBT = match[3];
+
+  if (itemNBT === "" || itemNBT === undefined) {
+    return `give ${selector} minecraft:${itemName} ${itemCount}`;
+  } else {
+    return `give ${selector} minecraft:${itemName} ${itemCount} ${itemNBT}`;
+  }
+};
+
+const normalizeMinecraftID = (id) => {
+  return id.replace(/minecraft:/gi, "");
+};
+
 /**
  *
  * @param {string} recipeName
@@ -62,4 +122,6 @@ module.exports = {
   showGreenMessage,
   showRedMessage,
   getInputFromEditor,
+  convertGiveCommandToSummonCommand,
+  convertSummonCommandToGiveCommand,
 };

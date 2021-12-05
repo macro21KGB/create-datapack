@@ -1,10 +1,13 @@
 {
   "name": "@macro21kgb/create-datapack",
   "version": "2.1.1",
-  "description": "A simple way to generate a Datapack",
+  "description": "A simple way to generate Datapacks",
   "main": "bin/index.js",
   "bin": {
     "create-datapack": "bin/index.js"
+  },
+  "scripts": {
+    "test": "jest --watchAll --verbose"
   },
   "keywords": [
     "datapack",
@@ -19,9 +22,13 @@
   "author": "macro21KGB",
   "license": "",
   "dependencies": {
+    "@types/jest": "^27.0.3",
     "inquirer": "^8.1.2",
     "inquirer-file-path": "^1.0.1",
     "inquirer-folder-explorer": "^2.0.0",
     "yargs": "^17.2.1"
+  },
+  "devDependencies": {
+    "jest": "^27.4.3"
   }
 }

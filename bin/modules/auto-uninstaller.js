@@ -108,4 +108,7 @@ const deleteDuplicates = (array) => {
 
 module.exports = {
   run,
+  deleteDuplicates,
+  getFiles,
+  scanFiles,
 };

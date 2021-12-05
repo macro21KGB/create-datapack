@@ -124,4 +124,7 @@ const validateRecipeStep = (line) => {
 
 module.exports = {
   run,
+  validateRecipeStep,
+  generateFloorCraftingRecipe,
+  parseFloorCraftingRecipe,
 };
