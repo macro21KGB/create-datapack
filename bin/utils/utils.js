@@ -86,7 +86,6 @@ const convertGiveCommandToSummonCommand = (giveCommand) => {
   }
 };
 
-//TODO: make test for this function
 /**
  *
  * @param {string} summonCommand summon command to convert into a give command
@@ -94,19 +93,32 @@ const convertGiveCommandToSummonCommand = (giveCommand) => {
  * @returns the give command generated from the summon command
  */
 const convertSummonCommandToGiveCommand = (summonCommand, selector) => {
-  const regex = /summon item ~ ~ ~ {Item:{id:"(.*?)",Count:(.*?)b(.*?)}}/g;
+  const regex = /summon item ~ ~ ~ {Item:{id:"(.*?)",Count:(.*?)b,tag:(.*?)}}/g;
+  selector = selector || "@p";
   const match = regex.exec(summonCommand);
-  const itemName = match[1];
-  const itemCount = match[2];
-  const itemNBT = match[3];
+  try {
+    const itemName = match[1];
+    const itemCount = match[2];
+    const itemNBT = match[3] + "}";
 
-  if (itemNBT === "" || itemNBT === undefined) {
-    return `give ${selector} minecraft:${itemName} ${itemCount}`;
-  } else {
-    return `give ${selector} minecraft:${itemName} ${itemCount} ${itemNBT}`;
+    if (itemNBT === "" || itemNBT === undefined) {
+      return `give ${selector} ${normalizeMinecraftID(itemName)} ${itemCount}`;
+    } else {
+      return `give ${selector} ${normalizeMinecraftID(
+        itemName
+      )}${itemNBT} ${itemCount}`;
+    }
+  } catch (e) {
+    showRedMessage("Error: Syntax error in the summon command");
+    return "ERROR";
   }
 };
 
+/**
+ *
+ * @param {string} id item id or name
+ * @returns the id of the item withouth the minecraft: prefix
+ */
 const normalizeMinecraftID = (id) => {
   return id.replace(/minecraft:/gi, "");
 };

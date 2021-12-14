@@ -16,6 +16,7 @@ const questions = [
     type: "list",
     message: "Version of minecraft",
     choices: [
+      { name: "1.18.x", value: "8" },
       { name: "1.17.x", value: "7" },
       { name: "1.16.x", value: "6" },
     ],
