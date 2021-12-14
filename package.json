@@ -1,6 +1,6 @@
 {
   "name": "@macro21kgb/create-datapack",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "A simple way to generate Datapacks",
   "main": "bin/index.js",
   "bin": {
