@@ -1,5 +1,7 @@
-const run = () => {};
+const run = () => {
+  console.log('Crafting Table Recipe');
+};
 
-exports.modules = {
+module.exports = {
   run,
 };
