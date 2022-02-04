@@ -56,8 +56,7 @@ const scanFiles = (files) => {
         // take the first group of the regexp
         const entity = line.match(regexp) ? line.match(regexp)[0] : null;
 
-        if (entity)
-          if (!entity.includes("player"))
+        if (entity && !entity.includes("player"))
             entitiesToDelete.push(`kill @e${entity}`);
       }
     }

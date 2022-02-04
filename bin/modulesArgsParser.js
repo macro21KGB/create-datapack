@@ -10,6 +10,10 @@ const modules = {
     const module = require("./modules/floor-crafting-recipe");
     module.run();
   },
+  "converter-summon-give": () => {
+    const module = require("./modules/converter-summon-give");
+    module.run();
+  },
 };
 
 /**

@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 
 const inquirer = require("inquirer");
 const fs = require("fs");
@@ -81,7 +81,7 @@ if (process.argv.length > 2 && process.argv[2] === "-m") {
         //Get the templates
         const templates = getTemplates(answers.nameSpace);
 
-        let choices = [];
+       let choices = [];
         templates.forEach((template) => {
           choices.push({
             name: template.title.trim(),
@@ -139,6 +139,10 @@ if (process.argv.length > 2 && process.argv[2] === "-m") {
     console.log(chalk.green("✔ All Done!"));
   }
 
+  /**
+   *
+   * @param {String} namespace
+   * */
   function getTemplates(namespace) {
     let templates = [];
     const fromDirectory = __dirname + "\\templates";

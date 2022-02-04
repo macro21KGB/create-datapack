@@ -69,7 +69,7 @@ const convertGiveCommandToSummonCommand = (giveCommand) => {
   try {
     const itemName = match[1];
     const itemNBT = match[2];
-    const itemCount = giveCommand.split(" ")[3];
+    const itemCount = giveCommand.split(" ")[3] || "1";
 
     if (itemNBT === "" || itemNBT === undefined) {
       return `summon item ~ ~ ~ {Item:{id:"minecraft:${normalizeMinecraftID(
