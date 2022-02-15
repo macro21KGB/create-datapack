@@ -6,6 +6,7 @@
   "bin": {
     "create-datapack": "bin/index.js"
   },
+  "type": "module",
   "scripts": {
     "test": "jest --watchAll --verbose"
   },
@@ -23,6 +24,7 @@
   "license": "",
   "dependencies": {
     "@types/jest": "^27.0.3",
+    "figlet": "^1.5.2",
     "inquirer": "^8.1.2",
     "inquirer-file-path": "^1.0.1",
     "inquirer-folder-explorer": "^2.0.0",

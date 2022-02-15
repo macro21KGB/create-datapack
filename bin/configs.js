@@ -1,5 +1,6 @@
-const fs = require("fs");
-const chalk = require("chalk");
+import { writeFileSync, mkdirSync } from "fs";
+import chalk from "chalk";
+const { green } = chalk;
 
 let defaultPackMCMeta = {
   pack: {
@@ -68,32 +69,34 @@ let namespaceMinecraftConfig = {
   values: ["NAMESPACE:load/main"],
 };
 
+
+
 //Creating pack.MCMeta file
-exports.createMCMeta = (directory, version, description) => {
-  console.log(chalk.green("Generating MCMETA..."));
+export const createMCMeta = (directory, version, description) => {
+  console.log(green("Generating MCMETA..."));
 
   defaultPackMCMeta["pack"]["pack_format"] = +version;
   defaultPackMCMeta["pack"]["description"] = description;
 
-  fs.writeFileSync(
+  writeFileSync(
     process.cwd() + "\\" + directory + "\\pack.mcmeta",
     JSON.stringify(defaultPackMCMeta)
   );
-};
+}
 
 //creating cross datapack advancements
-exports.createGlobalAdvancements = (
+export const createGlobalAdvancements = (
   directory,
   username,
   datpackName,
   description
 ) => {
-  console.log(chalk.green("Generating Global Advancements..."));
+  console.log(green("Generating Global Advancements..."));
   let currentDir = directory + "/global/advancements";
 
   //Root advancement
-  fs.mkdirSync(currentDir, { recursive: true });
-  fs.writeFileSync(
+  mkdirSync(currentDir, { recursive: true });
+  writeFileSync(
     currentDir + "/root.json",
     JSON.stringify(defaultRootAdvancement)
   );
@@ -101,7 +104,7 @@ exports.createGlobalAdvancements = (
   //Username Advancement
   defaultUsernameAdvancement.display.icon.nbt = `{SkullOwner: ${username}}`;
   defaultUsernameAdvancement.display.title = username;
-  fs.writeFileSync(
+  writeFileSync(
     currentDir + `/${username}.json`,
     JSON.stringify(defaultUsernameAdvancement)
   );
@@ -110,68 +113,68 @@ exports.createGlobalAdvancements = (
   defaultDatapackAdvancement.display.title = datpackName;
   defaultDatapackAdvancement.display.description = description;
   defaultDatapackAdvancement.parent = `global:${username}`;
-  fs.writeFileSync(
+  writeFileSync(
     currentDir + `/${datpackName.replace(/ /g, "_").toLowerCase()}.json`,
     JSON.stringify(defaultDatapackAdvancement)
   );
-};
+}
 
 //Creating minecraft/tags/functions for the tick and load functionality
-exports.createMinecraftTags = (directory, namespace) => {
-  console.log(chalk.green("Generating Minecraft Tag Functions..."));
+export const createMinecraftTags = (directory, namespace) => {
+  console.log(green("Generating Minecraft Tag Functions..."));
 
   let currentDir = directory + "/minecraft/tags/functions/";
-  fs.mkdirSync(currentDir, { recursive: true });
+  mkdirSync(currentDir, { recursive: true });
 
   namespaceMinecraftConfig.values = [namespace + ":load"];
-  fs.writeFileSync(
+  writeFileSync(
     currentDir + "load.json",
     JSON.stringify(namespaceMinecraftConfig)
   );
 
   namespaceMinecraftConfig.values = [namespace + ":main"];
-  fs.writeFileSync(
+  writeFileSync(
     currentDir + "tick.json",
     JSON.stringify(namespaceMinecraftConfig)
   );
-};
+}
 
-exports.createMainFunctionFolder = (
+export const createMainFunctionFolder = (
   directory,
   namespace,
   usingTemplate,
   templateData
 ) => {
   let currentDir = directory + `/${namespace}/`;
-  fs.mkdirSync(currentDir + "functions", {
+  mkdirSync(currentDir + "functions", {
     recursive: true,
   });
 
   if (!usingTemplate) {
-    console.log(chalk.green("Generating Main Function files..."));
-    fs.writeFileSync(currentDir + "functions/main.mcfunction", "say main");
-    fs.writeFileSync(currentDir + "functions/load.mcfunction", "say load");
+    console.log(green("Generating Main Function files..."));
+    writeFileSync(currentDir + "functions/main.mcfunction", "say main");
+    writeFileSync(currentDir + "functions/load.mcfunction", "say load");
   } else {
     console.log(
-      chalk.green("Generating Main Function files from Templates...")
+      green("Generating Main Function files from Templates...")
     );
     templateData.forEach((mcfunction) => {
       let selectedFolder = currentDir + mcfunction.file_type + "/";
       let extension =
         mcfunction.file_type === "functions" ? ".mcfunction" : ".json";
-      fs.mkdirSync(selectedFolder, {
+      mkdirSync(selectedFolder, {
         recursive: true,
       });
 
       console.log(
-        chalk.green(
+        green(
           `\tGenerating ${mcfunction.file_type}/${mcfunction.file_name}${extension}`
         )
       );
-      fs.writeFileSync(
+      writeFileSync(
         selectedFolder + mcfunction.file_name + extension,
         mcfunction.content
       );
     });
   }
-};
+}

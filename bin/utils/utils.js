@@ -1,14 +1,17 @@
-const chalk = require("chalk");
-const fs = require("fs");
-const path = require("path");
-const inquirer = require("inquirer");
-const folderExplorer = require("inquirer-folder-explorer");
 
-const showGreenMessage = (message) => {
+import chalk from "chalk"
+import { readFileSync, readdirSync, existsSync, mkdirSync } from "fs"
+import inquirer from "inquirer"
+import folderExplorer from "inquirer-folder-explorer"
+import { homedir } from "os"
+import { dirname, join } from "path"
+import { parseMCTemplate } from "../parser.js";
+
+export const showGreenMessage = (message) => {
   console.log(chalk.green(message));
 };
 
-const showRedMessage = (message) => {
+export const showRedMessage = (message) => {
   console.log(chalk.red(message));
 };
 
@@ -19,7 +22,7 @@ const showRedMessage = (message) => {
  * @param {(recipeName:string,raweRecipe:string[], selectedPath:string) => void} callback
  * @returns {boolean}
  */
-const getInputFromEditor = (defaultMessage, callback) => {
+export const getInputFromEditor = (defaultMessage, callback) => {
   let recipe = [];
   // @ts-ignore
   inquirer.registerPrompt("filePath", require("inquirer-file-path"));
@@ -61,7 +64,7 @@ const getInputFromEditor = (defaultMessage, callback) => {
  * @param {string} giveCommand
  * @returns the summon command generated from the give command
  */
-const convertGiveCommandToSummonCommand = (giveCommand) => {
+export const convertGiveCommandToSummonCommand = (giveCommand) => {
   const itemToSummon = giveCommand.split(" ")[2];
   const regex = /([a-zA-Z_:]+)(.*)/g;
   const match = regex.exec(itemToSummon);
@@ -92,8 +95,8 @@ const convertGiveCommandToSummonCommand = (giveCommand) => {
  * @param {string} selector selector to use in the give command (default: "@s")
  * @returns the give command generated from the summon command
  */
-const convertSummonCommandToGiveCommand = (summonCommand, selector) => {
-  const regex = /summon item ~ ~ ~ {Item:{id:"(.*?)",Count:(.*?)b,tag:(.*?)}}/g;
+export const convertSummonCommandToGiveCommand = (summonCommand, selector) => {
+  const regex = /summon item ~ ~ ~ ({Item:{id:"(.*?)",Count:(.*?)b,tag:(.*?)}})/g;
   selector = selector || "@p";
   const match = regex.exec(summonCommand);
   try {
@@ -123,17 +126,104 @@ const normalizeMinecraftID = (id) => {
   return id.replace(/minecraft:/gi, "");
 };
 
+
+
+export const getGeneralConfig = async () => {
+  const answers = await inquirer.prompt([
+    {
+      type: "list",
+      message: "Version of minecraft",
+      choices: [
+        { name: "1.18.x", value: "8" },
+        { name: "1.17.x", value: "7" },
+        { name: "1.16.x", value: "6" },
+      ],
+      name: "version",
+    },
+    {
+      type: "input",
+      name: "datapackName",
+      message: "Name of the datapack",
+      default: "Default_Datapack",
+    },
+    {
+      type: "input",
+      name: "description",
+      message: "Description of the datapack",
+      default: "Default description",
+    },
+    {
+      type: "input",
+      name: "nameSpace",
+      message: "Namespace of the datapack",
+      default: "default",
+      filter: (input, _) => {
+        return input.replace(/ /g, "_").toLowerCase();
+      },
+    },
+    {
+      type: "input",
+      name: "username",
+      message: "Author's Username",
+      default: "my_username",
+      filter: (input, _) => {
+        return input.replace(/ /g, "_").toLowerCase();
+      },
+    },
+    {
+      type: "confirm",
+      name: "usingTemplate",
+      message: "Do you want to use a custom template",
+      default: "false",
+    },
+  ]);
+
+  return answers;
+
+}
+
+
+
 /**
  *
- * @param {string} recipeName
- * @param {{id:string,count:number}[]} recipe
- * @returns
- */
+ * @param {String} namespace
+ * */
+export const getTemplates = (namespace) => {
+  let templates = [];
 
-module.exports = {
-  showGreenMessage,
-  showRedMessage,
-  getInputFromEditor,
-  convertGiveCommandToSummonCommand,
-  convertSummonCommandToGiveCommand,
-};
+  const fromDirectory = join(dirname(".\templates"), "templates");
+  const fromCustomDirectory = join(homedir(), "datapack-templates");
+
+
+  //Load template file from Inner Configs
+  templates.push(...readTemplateFile(fromDirectory, namespace));
+
+  //If a custom folder exists, use the templates located there too
+  if (existsSync(fromCustomDirectory)) {
+    templates.push(...readTemplateFile(fromCustomDirectory, namespace));
+  } else {
+    //Generate the folder is it doesn't exists
+    mkdirSync(fromCustomDirectory, { recursive: true });
+    console.log(
+      chalk.blue(
+        "Custom Templates Folder Generated in: " + fromCustomDirectory
+      )
+    );
+  }
+
+  return templates;
+}
+
+export const readTemplateFile = (directory, namespace) => {
+  let files = [];
+
+  const templateFiles = readdirSync(directory);
+  for (const file of templateFiles) {
+    const fromPath = join(directory, file);
+    const data = readFileSync(fromPath);
+
+    files.push(parseMCTemplate(data.toString(), namespace));
+  }
+
+  return files.length > 0 ? files : [];
+}

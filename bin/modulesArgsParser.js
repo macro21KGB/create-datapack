@@ -1,18 +1,21 @@
-const chalk = require("chalk");
-const inquirer = require("inquirer");
+import chalk from "chalk";
+const { blue, bold, red } = chalk;
+// import * as autoUninstaller from "../bin/modules/auto-uninstaller.js";
+// import * as floorCraftingRecipe from "../bin/modules/floor-crafting-recipe.js";
+import * as converterSummonGive from "../bin/modules/converter-summon-give.js";
+
+import inquirer from "inquirer";
+
 
 const modules = {
-  "auto-uninstaller": () => {
-    const module = require("./modules/auto-uninstaller");
-    module.run();
-  },
-  "floor-crafting-recipe": () => {
-    const module = require("./modules/floor-crafting-recipe");
-    module.run();
-  },
-  "converter-summon-give": () => {
-    const module = require("./modules/converter-summon-give");
-    module.run();
+  // "auto-uninstaller": () => {
+  //   autoUninstaller.run();
+  // },
+  // "floor-crafting-recipe": () => {
+  //   floorCraftingRecipe.run();
+  // },
+  "converter-summon-give": async () => {
+    await converterSummonGive.run();
   },
 };
 
@@ -32,33 +35,28 @@ const generateListOfModules = (modules) => {
 };
 
 // execute the module
-const executeModule = (moduleName) => {
+const executeModule = async (moduleName) => {
   if (modules[moduleName]) {
-    console.log(chalk.blue(`Executing module: ${chalk.bold(moduleName)}`));
-    modules[moduleName]();
+    console.log(blue(`Executing module: ${bold(moduleName)}`));
+    await modules[moduleName]();
   } else {
-    console.log(chalk.red("Module not found, check for syntax error"));
+    console.log(red("Module not found, check for syntax error"));
   }
 };
 
 // create a list using inquirer with the list of modules
-const runWithInquirer = () => {
+export const selectModuleInquirer = async () => {
   const list = generateListOfModules(modules);
-  inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "module",
-        message: "Select a module",
-        choices: list,
-      },
-    ])
-    .then((answers) => {
-      executeModule(answers.module);
-    });
+  const answers = await inquirer.prompt([
+    {
+      type: "list",
+      name: "module",
+      message: "Select a module",
+      choices: list,
+    }
+  ]);
+
+  await executeModule(answers.module);
 };
 
-module.exports = {
-  executeModule,
-  runWithInquirer,
-};
+

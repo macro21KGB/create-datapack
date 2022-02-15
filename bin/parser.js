@@ -5,7 +5,7 @@
  * @param {string} namespace namespace of the datapack
  * @returns parse the .mclate file and return the parsed data
  */
-exports.parseMCTemplate = (text, namespace) => {
+export const parseMCTemplate = (text, namespace) => {
 	let file_content = text.split("\n");
 	const title = (file_content[0] != "" ? file_content[0] : "UNDEFINED").replace("<###>", "");
 
@@ -20,7 +20,7 @@ exports.parseMCTemplate = (text, namespace) => {
 
 	file_content.forEach(line => {
 
-		if(!is_reading_content && line.startsWith("<===")) {
+		if (!is_reading_content && line.startsWith("<===")) {
 			file_name = line.replace("<===", "");
 			is_reading_content = true;
 		}

@@ -1,17 +1,16 @@
-const chalk = require("chalk");
-const {convertGiveCommandToSummonCommand, convertSummonCommandToGiveCommand  } = require("../utils/utils");
-const inquirer = require("inquirer");
+import chalk from "chalk";
+const { blue, green } = chalk;
+import { convertGiveCommandToSummonCommand, convertSummonCommandToGiveCommand } from "../utils/utils.js";
+import inquirer from "inquirer";
 
-const run = () => {
- 
+export const run = async () => {
 
-
-  inquirer.prompt([
+  const answers = await inquirer.prompt(
     {
       type: "input",
       name: "command",
       message: "What command would you like to convert?",
-      validate: function(value) {
+      validate: function (value) {
         if (value.length) {
           return true;
         } else {
@@ -19,25 +18,22 @@ const run = () => {
         }
       }
     }
-  ]).then(answers => {
+  )
 
-    let commandToConvert = "";
-    let convertedCommand = "";
-    commandToConvert = answers.command;
-    
-    if (commandToConvert.includes("summon")) {
-      console.log(chalk.blue(`Converting ${commandToConvert} to give command`));
-      convertedCommand = convertSummonCommandToGiveCommand(convertedCommand);
-    } else {
-      console.log(chalk.blue(`Converting ${commandToConvert} to summon command`));
-      convertedCommand = convertGiveCommandToSummonCommand(commandToConvert);
-    }
-    console.log(chalk.green(`Converted command: ${convertedCommand}`));
-    //TODO rework the summon converter
-  });
- 
+
+  let commandToConvert = "";
+  let convertedCommand = "";
+  commandToConvert = answers.command;
+
+  if (commandToConvert.includes("summon")) {
+    console.log(blue(`Converting ${commandToConvert} to give command`));
+    convertedCommand = convertSummonCommandToGiveCommand(convertedCommand);
+  } else {
+    console.log(blue(`Converting ${commandToConvert} to summon command`));
+    convertedCommand = convertGiveCommandToSummonCommand(commandToConvert);
+  }
+  console.log(green(`Converted command: ${convertedCommand}`));
+  //TODO rework the summon converter
+
 };
 
-module.exports = {
-  run,
-};

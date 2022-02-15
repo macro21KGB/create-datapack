@@ -1,5 +1,7 @@
-const fs = require("fs");
-const chalk = require("chalk");
+import { readdirSync, statSync, readFileSync, existsSync, writeFileSync } from "fs";
+
+import chalk from "chalk";
+const { green, bold, red } = chalk;
 
 // cerca nella directory e nelle sottodirectory corrente tutti i file con estensione
 //.mcfunction e salva il loro path in un array
@@ -12,10 +14,10 @@ const chalk = require("chalk");
  */
 const getFiles = (dir, files_) => {
   files_ = files_ || [];
-  const files = fs.readdirSync(dir);
+  const files = readdirSync(dir);
   for (let i in files) {
     const name = dir + "/" + files[i];
-    if (fs.statSync(name).isDirectory()) {
+    if (statSync(name).isDirectory()) {
       getFiles(name, files_);
     } else {
       if (name.endsWith(".mcfunction")) {
@@ -36,7 +38,7 @@ const scanFiles = (files) => {
   let entitiesToDelete = [];
   for (let i in files) {
     const file = files[i];
-    const lines = fs.readFileSync(file).toString().split("\n");
+    const lines = readFileSync(file).toString().split("\n");
     for (let j in lines) {
       const line = lines[j];
       if (line.includes("scoreboard objectives add")) {
@@ -57,7 +59,7 @@ const scanFiles = (files) => {
         const entity = line.match(regexp) ? line.match(regexp)[0] : null;
 
         if (entity && !entity.includes("player"))
-            entitiesToDelete.push(`kill @e${entity}`);
+          entitiesToDelete.push(`kill @e${entity}`);
       }
     }
   }
@@ -66,10 +68,10 @@ const scanFiles = (files) => {
 
 const run = () => {
   // controlla se è presente un file con estensione .mcmeta, se è presente lo ritorna true, altrimenti false
-  const isMeta = fs.existsSync(`${process.cwd()}/pack.mcmeta`);
+  const isMeta = existsSync(`${process.cwd()}/pack.mcmeta`);
 
   if (isMeta) {
-    console.log(chalk.green("Uninstaller: found pack.mcmeta"));
+    console.log(green("Uninstaller: found pack.mcmeta"));
 
     const files = getFiles(process.cwd(), []);
     const results = scanFiles(files);
@@ -79,16 +81,16 @@ const run = () => {
 
     try {
       const fileName = `${process.cwd()}/data/${namespace}/functions/uninstaller.mcfunction`;
-      fs.writeFileSync(fileName, results.join("\n"));
+      writeFileSync(fileName, results.join("\n"));
       console.log(
-        chalk.green(`Uninstaller: generated ${chalk.bold(fileName)}`)
+        green(`Uninstaller: generated ${bold(fileName)}`)
       );
     } catch (error) {
-      console.log(chalk.red(`Uninstaller Failed to generate file: ${error}`));
+      console.log(red(`Uninstaller Failed to generate file: ${error}`));
     }
   } else {
     console.log(
-      chalk.red(
+      red(
         "Uninstaller: pack.mcmeta not found, Execute this module on the root of the datapack"
       )
     );
@@ -105,7 +107,7 @@ const deleteDuplicates = (array) => {
   return array.filter((item, index) => array.indexOf(item) === index);
 };
 
-module.exports = {
+export default {
   run,
   deleteDuplicates,
   getFiles,

@@ -1,184 +1,111 @@
 #!/usr/bin/env node
+import chalk from "chalk";
+import { mkdirSync } from "fs";
+import inquirer from "inquirer";
+import { homedir } from "os";
+import { createGlobalAdvancements, createMainFunctionFolder, createMCMeta, createMinecraftTags } from './configs.js';
+import { getGeneralConfig, getTemplates } from "./utils/utils.js";
 
-const inquirer = require("inquirer");
-const fs = require("fs");
-const chalk = require("chalk");
-const configs = require("./configs");
-const path = require("path");
-const parser = require("./parser");
-const os = require("os");
-const moduleArgsParser = require("./modulesArgsParser");
-const { exit } = require("process");
+import { selectModuleInquirer } from "./modulesArgsParser.js";
+import { exit } from "process";
+import figlet from "figlet";
+const { prompt } = inquirer;
 
-// questions for generating the datapack
-const questions = [
-  {
-    type: "list",
-    message: "Version of minecraft",
-    choices: [
-      { name: "1.18.x", value: "8" },
-      { name: "1.17.x", value: "7" },
-      { name: "1.16.x", value: "6" },
-    ],
-    name: "version",
-  },
-  {
-    type: "input",
-    name: "datapackName",
-    message: "Name of the datapack",
-    default: "Default_Datapack",
-  },
-  {
-    type: "input",
-    name: "description",
-    message: "Description of the datapack",
-    default: "Default description",
-  },
-  {
-    type: "input",
-    name: "nameSpace",
-    message: "Namespace of the datapack",
-    default: "default",
-    filter: (input, _) => {
-      return input.replace(/ /g, "_").toLowerCase();
-    },
-  },
-  {
-    type: "input",
-    name: "username",
-    message: "Author's Username",
-    default: "my_username",
-    filter: (input, _) => {
-      return input.replace(/ /g, "_").toLowerCase();
-    },
-  },
-  {
-    type: "confirm",
-    name: "usingTemplate",
-    message: "Do you want to use a custom template",
-    default: "false",
-  },
-];
 
-console.log(chalk.blue("Current Path: " + chalk.bold(process.cwd())));
+const sleep = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// if the argument is not empty, open the module screen
+
+console.clear();
+figlet("Create-Datapack", (err, data) => {
+  if (err) {
+    console.log(err);
+    exit(1);
+  }
+  console.log(chalk.green(data));
+  console.log(
+    chalk.underline(chalk.bold("by macro21KGB")
+    )
+  );
+})
+await sleep(2000);
+
+//if the argument is not empty, open the module screen
 if (process.argv.length > 2 && process.argv[2] === "-m") {
-  moduleArgsParser.runWithInquirer();
-} else {
-  inquirer
-    .prompt(questions)
-    .then((answers) => {
-      //If using a tempalte, get the templates from the file in the templates folder
-      if (answers.usingTemplate) {
-        console.log(
-          chalk.blue(
-            "To edit the templates, go to: " +
-              chalk.bold(os.homedir() + "\\datapack-templates")
-          )
-        );
-
-        //Get the templates
-        const templates = getTemplates(answers.nameSpace);
-
-       let choices = [];
-        templates.forEach((template) => {
-          choices.push({
-            name: template.title.trim(),
-            value: template.files,
-          });
-        });
-
-        //Ask to choose the template to add
-        inquirer
-          .prompt({
-            type: "rawlist",
-            message: "Choose a template",
-            choices: choices,
-            name: "templateInUse",
-          })
-          .then((templateData) => {
-            generateDirectoryStructure(answers, templateData.templateInUse);
-          });
-      } else {
-        generateDirectoryStructure(answers, null);
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  /**
-   *
-   * @param {Object} data
-   * @param {any} templateData
-   */
-  function generateDirectoryStructure(data, templateData) {
-    const baseDir = "./" + data.datapackName + "/data";
-    fs.mkdirSync(baseDir, { recursive: true });
-    configs.createMCMeta(data.datapackName, data.version, data.description);
-    configs.createGlobalAdvancements(
-      baseDir,
-      data.username,
-      data.datapackName,
-      data.description
-    );
-
-    configs.createMinecraftTags(baseDir, data.nameSpace);
-
-    if (templateData === null)
-      configs.createMainFunctionFolder(baseDir, data.nameSpace, false, null);
-    else
-      configs.createMainFunctionFolder(
-        baseDir,
-        data.nameSpace,
-        true,
-        templateData
-      );
-
-    console.log(chalk.green("✔ All Done!"));
-  }
-
-  /**
-   *
-   * @param {String} namespace
-   * */
-  function getTemplates(namespace) {
-    let templates = [];
-    const fromDirectory = __dirname + "\\templates";
-    const fromCustomDirectory = path.join(os.homedir(), "datapack-templates");
-
-    //Load template file from Inner Configs
-    templates.push(...readTemplateFile(fromDirectory, namespace));
-
-    //If a custom folder exists, use the templates located there too
-    if (fs.existsSync(fromCustomDirectory)) {
-      templates.push(...readTemplateFile(fromCustomDirectory, namespace));
-    } else {
-      //Generate the folder is it doesn't exists
-      fs.mkdirSync(fromCustomDirectory, { recursive: true });
-      console.log(
-        chalk.blue(
-          "Custom Templates Folder Generated in: " + fromCustomDirectory
-        )
-      );
-    }
-
-    return templates;
-  }
-
-  function readTemplateFile(directory, namespace) {
-    let files = [];
-
-    const templateFiles = fs.readdirSync(directory);
-    for (const file of templateFiles) {
-      const fromPath = path.join(directory, file);
-
-      const data = fs.readFileSync(fromPath);
-
-      files.push(parser.parseMCTemplate(data.toString(), namespace));
-    }
-
-    return files.length > 0 ? files : [];
-  }
+  await selectModuleInquirer();
+  exit();
 }
+
+
+const answers = await getGeneralConfig();
+
+if (!answers.usingTemplate) {
+  generateDirectoryStructure(answers, null);
+}
+
+console.log(
+  chalk.blue(
+    "To edit the templates, go to: " +
+    chalk.bold(homedir() + "\\datapack-templates")
+  )
+);
+
+//Get the templates
+const templates = getTemplates(answers.nameSpace);
+
+const choices = templates.map((template) => {
+  return {
+    name: template.title.trim(),
+    value: template.files,
+  };
+});
+
+//Ask to choose the template to add
+prompt({
+  type: "rawlist",
+  message: "Choose a template",
+  choices: choices,
+  name: "templateInUse",
+})
+  .then((templateData) => {
+    generateDirectoryStructure(answers, templateData.templateInUse);
+  });
+
+
+
+
+/**
+ *
+ * @param {Object} data
+ * @param {any} templateData
+ */
+function generateDirectoryStructure(data, templateData) {
+  const baseDir = "./" + data.datapackName + "/data";
+  mkdirSync(baseDir, { recursive: true });
+  createMCMeta(data.datapackName, data.version, data.description);
+  createGlobalAdvancements(
+    baseDir,
+    data.username,
+    data.datapackName,
+    data.description
+  );
+
+  createMinecraftTags(baseDir, data.nameSpace);
+
+  if (templateData === null) {
+    createMainFunctionFolder(baseDir, data.nameSpace, false, null);
+  }
+  else {
+    createMainFunctionFolder(
+      baseDir,
+      data.nameSpace,
+      true,
+      templateData
+    );
+  }
+  console.log(chalk.green("✔ All Done!"));
+}
+
+
+
+
+
