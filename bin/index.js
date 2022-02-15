@@ -5,6 +5,11 @@ import inquirer from "inquirer";
 import { homedir } from "os";
 import { createGlobalAdvancements, createMainFunctionFolder, createMCMeta, createMinecraftTags } from './configs.js';
 import { getGeneralConfig, getTemplates } from "./utils/utils.js";
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
+
+
+
 
 import { selectModuleInquirer } from "./modulesArgsParser.js";
 import { exit } from "process";
@@ -15,6 +20,18 @@ const { prompt } = inquirer;
 const sleep = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
 
 
+// load modules if the user wants to use them
+const argv = yargs(hideBin(process.argv))
+  .options('m', { describe: 'Use the modules for various actions', alias: 'modules' })
+  .alias('h', 'help')
+  .argv;
+
+if (argv.m) {
+  await selectModuleInquirer();
+  exit();
+}
+
+//load the main prompt
 console.clear();
 figlet("Create-Datapack", (err, data) => {
   if (err) {
@@ -27,13 +44,11 @@ figlet("Create-Datapack", (err, data) => {
     )
   );
 })
+
 await sleep(2000);
 
-//if the argument is not empty, open the module screen
-if (process.argv.length > 2 && process.argv[2] === "-m") {
-  await selectModuleInquirer();
-  exit();
-}
+
+
 
 
 const answers = await getGeneralConfig();
