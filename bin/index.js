@@ -48,9 +48,6 @@ figlet("Create-Datapack", (err, data) => {
 await sleep(2000);
 
 
-
-
-
 const answers = await getGeneralConfig();
 
 if (!answers.usingTemplate) {

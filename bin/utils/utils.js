@@ -22,6 +22,7 @@ export const showRedMessage = (message) => {
  * @param {(recipeName:string,raweRecipe:string[], selectedPath:string) => void} callback
  * @returns {boolean}
  */
+
 export const getInputFromEditor = (defaultMessage, callback) => {
   let recipe = [];
   // @ts-ignore

@@ -1,25 +1,22 @@
-const chalk = require("chalk");
-const inquirer = require("inquirer");
-const PATH = require("path");
+import chalk from "chalk";
+const { green } = chalk;
+import inquirer from "inquirer";
+import { join } from "path";
 
-const {
-  showGreenMessage,
-  showRedMessage,
-  getInputFromEditor,
-} = require("../utils/utils");
-const fs = require("fs");
 
-let recipe = [];
+import { showGreenMessage, showRedMessage, getInputFromEditor } from "../utils/utils";
+import { appendFile } from "fs";
 
-const run = () => {
-  const recipe = getInputFromEditor(
+
+const run = async () => {
+  const success = getInputFromEditor(
     "<amount> <minecraft:item_name>\nExample:\n1 minecraft:glowstone_dust\n3 minecraft:redstone\nFor defining the result:\nRESULT: minecraft:<minecraft:name>\nor\nuse mcstacker.net, generate a give command and do the same thing\nRESULT: give @p ....",
     (recipeName, recipe, path) => {
       const parsedCraftingRecipe = parseFloorCraftingRecipe(recipe);
       if (typeof parsedCraftingRecipe === "boolean") return;
       else {
         const [parsedRecipe, finalItem] = parsedCraftingRecipe;
-        console.log(chalk.green("Recipe parsed successfully!"));
+        console.log(green("Recipe parsed successfully!"));
         generateFloorCraftingRecipe(recipeName, parsedRecipe, finalItem, path);
       }
     }
@@ -72,9 +69,8 @@ const generateFloorCraftingRecipe = (recipeName, recipe, resultItem, path) => {
   let killPart = "";
 
   recipe.forEach((item, index) => {
-    executePart += `execute as @e[type=minecraft:item, nbt={Item:{id:"${
-      item.id
-    }", Count:${item.count}b}}${index > 0 ? ", distance=..1" : ""}] run `;
+    executePart += `execute as @e[type=minecraft:item, nbt={Item:{id:"${item.id
+      }", Count:${item.count}b}}${index > 0 ? ", distance=..1" : ""}] run `;
   });
 
   executePart += `summon minecraft:item ~ ~ ~ {Tags: ["fresh_craft"], Item: { id: "${resultItem.id}", Count: ${resultItem.count}b}}`;
@@ -88,12 +84,12 @@ const generateFloorCraftingRecipe = (recipeName, recipe, resultItem, path) => {
 
   appendFunctionToFile(
     "\n" + executePart + "\n\n" + killPart,
-    PATH.join(path, `main.mcfunction`)
+    join(path, `main.mcfunction`)
   );
 };
 
 const appendFunctionToFile = (text, path) => {
-  fs.appendFile(path, text, (err) => {
+  appendFile(path, text, (err) => {
     if (err) {
       showRedMessage(err);
       return;
@@ -122,7 +118,7 @@ const validateRecipeStep = (line) => {
   return false;
 };
 
-module.exports = {
+export default {
   run,
   validateRecipeStep,
   generateFloorCraftingRecipe,

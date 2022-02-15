@@ -1,6 +1,7 @@
 import chalk from "chalk";
 const { blue, bold, red } = chalk;
-// import * as autoUninstaller from "../bin/modules/auto-uninstaller.js";
+import * as autoUninstaller from "../bin/modules/auto-uninstaller.js";
+
 // import * as floorCraftingRecipe from "../bin/modules/floor-crafting-recipe.js";
 import * as converterSummonGive from "../bin/modules/converter-summon-give.js";
 
@@ -8,12 +9,9 @@ import inquirer from "inquirer";
 
 
 const modules = {
-  // "auto-uninstaller": () => {
-  //   autoUninstaller.run();
-  // },
-  // "floor-crafting-recipe": () => {
-  //   floorCraftingRecipe.run();
-  // },
+  "auto-uninstaller": async () => {
+    await autoUninstaller.run();
+  },
   "converter-summon-give": async () => {
     await converterSummonGive.run();
   },

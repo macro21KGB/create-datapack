@@ -1,10 +1,9 @@
-import { readdirSync, statSync, readFileSync, existsSync, writeFileSync } from "fs";
+import { readdirSync, statSync, readFileSync, existsSync, writeFileSync, access } from "fs";
 
 import chalk from "chalk";
 const { green, bold, red } = chalk;
 
-// cerca nella directory e nelle sottodirectory corrente tutti i file con estensione
-//.mcfunction e salva il loro path in un array
+import { join } from "path";
 
 /**
  *
@@ -12,7 +11,7 @@ const { green, bold, red } = chalk;
  * @param {Array<string>} files_ array di files da ritornare
  * @returns {Array<string>}
  */
-const getFiles = (dir, files_) => {
+export const getFiles = (dir, files_) => {
   files_ = files_ || [];
   const files = readdirSync(dir);
   for (let i in files) {
@@ -33,7 +32,7 @@ const getFiles = (dir, files_) => {
  * @param {Array<string>} files
  * @returns {Array<string>}
  */
-const scanFiles = (files) => {
+export const scanFiles = (files) => {
   let result = [];
   let entitiesToDelete = [];
   for (let i in files) {
@@ -66,20 +65,24 @@ const scanFiles = (files) => {
   return result.concat(entitiesToDelete);
 };
 
-const run = () => {
+
+export const run = async () => {
+
   // controlla se è presente un file con estensione .mcmeta, se è presente lo ritorna true, altrimenti false
-  const isMeta = existsSync(`${process.cwd()}/pack.mcmeta`);
+  const isMeta = existsSync(join(process.cwd(), 'pack.mcmeta'));
 
   if (isMeta) {
     console.log(green("Uninstaller: found pack.mcmeta"));
 
     const files = getFiles(process.cwd(), []);
     const results = scanFiles(files);
-    const namespace = files[0]
-      .match(/data[/\\]([a-zA-Z_\-+0-9])+/g)[0]
-      .split("/")[1];
 
     try {
+      if (!files[0]) throw new Error("No Functions Found!");
+      const namespace = files[0]
+        .match(/data[/\\]([a-zA-Z_\-+0-9])+/g)[0]
+        .split("/")[1];
+
       const fileName = `${process.cwd()}/data/${namespace}/functions/uninstaller.mcfunction`;
       writeFileSync(fileName, results.join("\n"));
       console.log(
@@ -102,14 +105,8 @@ const run = () => {
  * @param {string[]} array
  * @returns
  */
-// delete duplicates from array
-const deleteDuplicates = (array) => {
-  return array.filter((item, index) => array.indexOf(item) === index);
-};
 
-export default {
-  run,
-  deleteDuplicates,
-  getFiles,
-  scanFiles,
+// delete duplicates from array
+export const deleteDuplicates = (array) => {
+  return array.filter((item, index) => array.indexOf(item) === index);
 };
