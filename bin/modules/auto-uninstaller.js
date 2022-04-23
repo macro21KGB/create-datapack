@@ -6,7 +6,7 @@ const { green, bold, red } = chalk;
 import { join } from "path";
 
 /**
- *
+ * Take a path and return an array of all the files in that directory
  * @param {string} dir directory da cercare
  * @param {Array<string>} files_ array di files da ritornare
  * @returns {Array<string>}

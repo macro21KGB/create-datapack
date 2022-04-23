@@ -8,6 +8,8 @@
   },
   "type": "module",
   "scripts": {
+    "start": "node bin/index.js",
+    "start-modules": "node bin/index.js --modules",
     "test": "jest --watchAll --verbose"
   },
   "keywords": [

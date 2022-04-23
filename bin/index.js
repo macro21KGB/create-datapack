@@ -8,9 +8,6 @@ import { getGeneralConfig, getTemplates } from "./utils/utils.js";
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 
-
-
-
 import { selectModuleInquirer } from "./modulesArgsParser.js";
 import { exit } from "process";
 import figlet from "figlet";
@@ -45,13 +42,14 @@ figlet("Create-Datapack", (err, data) => {
   );
 })
 
-await sleep(2000);
+await sleep(1000);
 
 
 const answers = await getGeneralConfig();
 
 if (!answers.usingTemplate) {
   generateDirectoryStructure(answers, null);
+  exit();
 }
 
 console.log(

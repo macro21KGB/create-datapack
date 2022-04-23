@@ -1,9 +1,9 @@
 
 /**
  * 
- * @param {string} text  file content
+ * @param {string} text the text to parse
  * @param {string} namespace namespace of the datapack
- * @returns parse the .mclate file and return the parsed data
+ * @returns the parsed .mclate file
  */
 export const parseMCTemplate = (text, namespace) => {
 	let file_content = text.split("\n");

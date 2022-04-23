@@ -6,6 +6,11 @@ import folderExplorer from "inquirer-folder-explorer"
 import { homedir } from "os"
 import { dirname, join } from "path"
 import { parseMCTemplate } from "../parser.js";
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
 
 export const showGreenMessage = (message) => {
   console.log(chalk.green(message));
@@ -191,8 +196,8 @@ export const getGeneralConfig = async () => {
  * */
 export const getTemplates = (namespace) => {
   let templates = [];
-
-  const fromDirectory = join(dirname(".\templates"), "templates");
+  console.log("Getting templates", process.cwd);
+  const fromDirectory = join(__dirname, "..", "templates");
   const fromCustomDirectory = join(homedir(), "datapack-templates");
 
 
