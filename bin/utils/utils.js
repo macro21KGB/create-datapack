@@ -60,10 +60,6 @@ export const getInputFromEditor = (defaultMessage, callback) => {
   return true;
 };
 
-// turn:
-// give @p carrot_on_a_stick{display:{Name:'{"text":"TEST","bold":true}'},Unbreakable:1b,test1:1b} 1
-// into:
-// summon item ~ ~ ~ {Item:{id:"minecraft:carrot",Count:1b,tag:{display:{Name:'{"text":"TEST","bold":true}'},test1:1b}}}
 
 /**
  * convert a give command into a summon command
@@ -71,28 +67,42 @@ export const getInputFromEditor = (defaultMessage, callback) => {
  * @returns the summon command generated from the give command
  */
 export const convertGiveCommandToSummonCommand = (giveCommand) => {
-  const itemToSummon = giveCommand.split(" ")[2];
-  const regex = /([a-zA-Z_:]+)(.*)/g;
-  const match = regex.exec(itemToSummon);
 
+  const regex = new RegExp('give ([0-9a-zA-Z@\\[\\]= ,]+\\]?) ([a-zA-Z:0-9_]+) ?(\\{.*\\})? ([0-9]+)', 'gm')
+  const str = `/give @p[limit=4,tag=aaa] minecraft:torch{display:{Name:'{"text":"Torcia Bella"}',Lore:['{"text":"Lore"}']},HideFlags:1,test: 1b} 64
+  `;
+
+  let resultRegex;
   try {
-    const itemName = match[1];
-    const itemNBT = match[2];
-    const itemCount = giveCommand.split(" ")[3] || "1";
+    while ((resultRegex = regex.exec(giveCommand)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (resultRegex.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
 
-    if (itemNBT === "" || itemNBT === undefined) {
-      return `summon item ~ ~ ~ {Item:{id:"minecraft:${normalizeMinecraftID(
-        itemName
-      )}",Count:${itemCount}b}}`;
-    } else {
-      return `summon item ~ ~ ~ {Item:{id:"minecraft:${normalizeMinecraftID(
-        itemName
-      )}",Count:${itemCount}b,tag:${itemNBT}}}`;
+      // The result can be accessed through the `m`-variable.
+      resultRegex.forEach((match, groupIndex) => {
+        console.log(`Found match, group ${groupIndex}: ${match}`);
+      });
+
+      resultRegex.groups = {
+        item: resultRegex[2],
+        itemTag: resultRegex[3],
+        itemCount: resultRegex[4],
+      };
+
+      const item = normalizeMinecraftID(resultRegex.groups.item);
+      const itemTag = resultRegex.groups.itemTag;
+      const itemCount = resultRegex.groups.itemCount;
+
+      const summonCommand = `summon item ~ ~ ~ {Item:{id:"minecraft:${item}",Count:${itemCount}b, tag:${itemTag}}}`;
+
+      return summonCommand;
     }
-  } catch (e) {
-    showRedMessage("Error: Syntax error in the give command");
-    return "ERROR";
+  } catch (error) {
+    showRedMessage(error);
   }
+
 };
 
 /**
@@ -101,26 +111,40 @@ export const convertGiveCommandToSummonCommand = (giveCommand) => {
  * @param {string} selector selector to use in the give command (default: "@s")
  * @returns the give command generated from the summon command
  */
-export const convertSummonCommandToGiveCommand = (summonCommand, selector) => {
-  const regex = /summon item ~ ~ ~ ({Item:{id:"(.*?)",Count:(.*?)b,tag:(.*?)}})/g;
-  selector = selector || "@p";
-  const match = regex.exec(summonCommand);
-  try {
-    const itemName = match[1];
-    const itemCount = match[2];
-    const itemNBT = match[3] + "}";
+export const convertSummonCommandToGiveCommand = (summonCommand) => {
 
-    if (itemNBT === "" || itemNBT === undefined) {
-      return `give ${selector} ${normalizeMinecraftID(itemName)} ${itemCount}`;
-    } else {
-      return `give ${selector} ${normalizeMinecraftID(
-        itemName
-      )}${itemNBT} ${itemCount}`;
+  const regex = new RegExp('id: ?"(.*)", ?Count:(\\d+b), ?tag:(\\{.*) ?\\}', 'gm')
+
+  const str = `/summon item ~ ~ ~ {Item:{id:"minecraft:torch",Count:1b,tag:{display:{Name:'{"text":"Torcia Bella"}',Lore:['{"text":"Test"}']},HideFlags:1,tags:1b}}}`;
+  let resultRegex;
+  let giveCommand = "";
+  while ((resultRegex = regex.exec(summonCommand)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (resultRegex.index === regex.lastIndex) {
+      regex.lastIndex++;
     }
-  } catch (e) {
-    showRedMessage("Error: Syntax error in the summon command");
-    return "ERROR";
+
+    // The result can be accessed through the `m`-variable.
+    resultRegex.forEach((match, groupIndex) => {
+      console.log(`Found match, group ${groupIndex}: ${match}`);
+    });
+
+    resultRegex.groups = {
+      item: resultRegex[1],
+      itemCount: resultRegex[2],
+      itemTag: resultRegex[3],
+    };
+
+    const item = normalizeMinecraftID(resultRegex.groups.item);
+    const itemCount = resultRegex.groups.itemCount;
+    const itemTag = resultRegex.groups.itemTag;
+
+    giveCommand = `give @p ${item}${itemTag.substring(0, itemTag.length - 1)} ${itemCount.replace(/b/gi, "")}`;
+
   }
+
+  return giveCommand;
+
 };
 
 /**

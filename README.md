@@ -32,7 +32,7 @@ Now with this command you can access different modules for any occasion
 
 - The **Auto-uninstaller**,It will scan your datapack an create an **uninstall.mcfunction** just for you, (run it in the root directory, where is the pack.mcmeta file)
 
-- The **Floor-Crafting-Recipe (WIP)**, It will generate a floor crafting recipe in the main.mcfunction file (default)
+- The **Summon-Give Convert**, Convert your commands into **give to summon** or **summon to give**
 
 ```
 create-datapack -m
@@ -43,7 +43,7 @@ create-datapack -m
 The templates are written in a **custom language**, it is very **simple** and **easy to use**, below there is an example of everything you can do:
 
 ```
-<###>Test Template <-- name of the template
+<###>Test Template <-- name of the template, must be first line
 
 <===functions:load  <-- location of the file : name of the function without extension (auto-added)
 scoreboard objectives add tf_rc dummy
@@ -107,6 +107,6 @@ You can create all possible files with this system, The **location in the datapa
 
 All the folder paths can be found on the [wiki](https://minecraft.fandom.com/wiki/Data_Pack) and as shown in the example you can create sub folders and **extensions are added automatically**
 
-### Where can i found the templates folder?
+## Where can i found the templates folder?
 
 When you are going to use a template, the path to the templates folder will appear inside the CLI, go to the indicated path and add or modify whatever you want.

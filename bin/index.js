@@ -4,7 +4,7 @@ import { mkdirSync } from "fs";
 import inquirer from "inquirer";
 import { homedir } from "os";
 import { createGlobalAdvancements, createMainFunctionFolder, createMCMeta, createMinecraftTags } from './configs.js';
-import { getGeneralConfig, getTemplates } from "./utils/utils.js";
+import { getGeneralConfig, getTemplates, showGreenMessage } from "./utils/utils.js";
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 
@@ -20,11 +20,17 @@ const sleep = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
 // load modules if the user wants to use them
 const argv = yargs(hideBin(process.argv))
   .options('m', { describe: 'Use the modules for various actions', alias: 'modules' })
+  .options('p', { describe: 'Show custom template folder', alias: 'path' })
   .alias('h', 'help')
   .argv;
 
 if (argv.m) {
   await selectModuleInquirer();
+  exit();
+}
+
+if (argv.p) {
+  showGreenMessage("Custom template folder: " + chalk.bold(homedir() + "\\datapack-templates"));
   exit();
 }
 

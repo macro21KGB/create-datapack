@@ -11,7 +11,7 @@ export const run = async () => {
       name: "command",
       message: "What command would you like to convert?",
       validate: function (value) {
-        if (value.length) {
+        if (value.length > 0) {
           return true;
         } else {
           return "Please enter a command";
@@ -27,13 +27,12 @@ export const run = async () => {
 
   if (commandToConvert.includes("summon")) {
     console.log(blue(`Converting ${commandToConvert} to give command`));
-    convertedCommand = convertSummonCommandToGiveCommand(convertedCommand);
+    convertedCommand = convertSummonCommandToGiveCommand(commandToConvert);
   } else {
     console.log(blue(`Converting ${commandToConvert} to summon command`));
     convertedCommand = convertGiveCommandToSummonCommand(commandToConvert);
   }
   console.log(green(`Converted command: ${convertedCommand}`));
-  //TODO rework the summon converter
 
 };
 
