@@ -15,10 +15,14 @@ export const run = async () => {
         if (value.length == 0)
           return "Please enter a command";
 
-        if (!value.includes("summon") || !value.includes("give"))
-          return "Please enter a summon/give command";
+        if (value.includes("summon"))
+          return true
 
-        return true;
+        if (value.includes("give"))
+          return true;
+
+
+        return "Please enter a summon or give command";
       }
     }
   )

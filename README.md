@@ -34,8 +34,14 @@ Now with this command you can access different modules for any occasion
 
 - The **Summon-Give Convert**, Convert your commands into **give to summon** or **summon to give**
 
+- **[NEW]** The **Generator-Sites Module**, This will give you the link of some of my custom generators (floor-crafting and crafting table recipe)
+
 ```
 create-datapack -m
+
+or 
+
+create-datapack --modules
 ```
 
 # Template System (.mclate)

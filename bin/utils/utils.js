@@ -39,11 +39,6 @@ export const convertGiveCommandToSummonCommand = (giveCommand) => {
         regex.lastIndex++;
       }
 
-      // The result can be accessed through the `m`-variable.
-      resultRegex.forEach((match, groupIndex) => {
-        console.log(`Found match, group ${groupIndex}: ${match}`);
-      });
-
       resultRegex.groups = {
         item: resultRegex[2],
         itemTag: resultRegex[3],
