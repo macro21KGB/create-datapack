@@ -2,7 +2,6 @@
 import chalk from "chalk"
 import { readFileSync, readdirSync, existsSync, mkdirSync } from "fs"
 import inquirer from "inquirer"
-import folderExplorer from "inquirer-folder-explorer"
 import { homedir } from "os"
 import { dirname, join } from "path"
 import { parseMCTemplate } from "../parser.js";
@@ -18,46 +17,6 @@ export const showGreenMessage = (message) => {
 
 export const showRedMessage = (message) => {
   console.log(chalk.red(message));
-};
-
-/**
- * Use inquirer to ask the user for the items to make the crafting,
- * and the result using the default text editor
- * @param {string} defaultMessage
- * @param {(recipeName:string,raweRecipe:string[], selectedPath:string) => void} callback
- * @returns {boolean}
- */
-
-export const getInputFromEditor = (defaultMessage, callback) => {
-  let recipe = [];
-  // @ts-ignore
-  inquirer.registerPrompt("filePath", require("inquirer-file-path"));
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "recipeName",
-        message: "Enter the recipe Name: ",
-        default: "recipe_name",
-      },
-      {
-        type: "editor",
-        name: "recipe",
-        default: defaultMessage,
-      },
-    ])
-    .then((answers) => {
-      folderExplorer(
-        "Please choose a folder",
-        process.cwd(),
-        function (err, folder) {
-          const selectedFolder = folder;
-          recipe = answers.recipe.split("\n");
-          callback(answers.recipeName, recipe, selectedFolder);
-        }
-      );
-    });
-  return true;
 };
 
 

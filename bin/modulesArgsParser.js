@@ -2,7 +2,6 @@ import chalk from "chalk";
 const { blue, bold, red } = chalk;
 import * as autoUninstaller from "../bin/modules/auto-uninstaller.js";
 
-// import * as floorCraftingRecipe from "../bin/modules/floor-crafting-recipe.js";
 import * as converterSummonGive from "../bin/modules/converter-summon-give.js";
 
 import inquirer from "inquirer";

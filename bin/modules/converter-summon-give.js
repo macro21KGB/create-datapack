@@ -11,11 +11,14 @@ export const run = async () => {
       name: "command",
       message: "What command would you like to convert?",
       validate: function (value) {
-        if (value.length > 0) {
-          return true;
-        } else {
+
+        if (value.length == 0)
           return "Please enter a command";
-        }
+
+        if (!value.includes("summon") || !value.includes("give"))
+          return "Please enter a summon/give command";
+
+        return true;
       }
     }
   )
