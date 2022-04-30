@@ -1,5 +1,6 @@
 import { writeFileSync, mkdirSync } from "fs";
 import chalk from "chalk";
+import path from "path";
 const { green } = chalk;
 
 let defaultPackMCMeta = {
@@ -79,7 +80,7 @@ export const createMCMeta = (directory, version, description) => {
   defaultPackMCMeta["pack"]["description"] = description;
 
   writeFileSync(
-    process.cwd() + "\\" + directory + "\\pack.mcmeta",
+    path.join(process.cwd(), directory, "pack.mcmeta"),
     JSON.stringify(defaultPackMCMeta)
   );
 }
