@@ -32,9 +32,9 @@ Now with this command you can access different modules for any occasion
 
 - The **Auto-uninstaller**,It will scan your datapack an create an **uninstall.mcfunction** just for you, (run it in the root directory, where is the pack.mcmeta file)
 
-- The **Summon-Give Convert**, Convert your commands into **give to summon** or **summon to give**
+- The **Summon-Give Convert**, Convert your commands into **give to summon** or **summon to give** (a little bit buggy but it is ok for most thing)
 
-- **[NEW]** The **Generator-Sites Module**, This will give you the link of some of my custom generators (floor-crafting and crafting table recipe)
+- The **Generator-Sites Module**, This will give you the link of some of my custom generators (floor-crafting and crafting table recipe)
 
 ```
 create-datapack -m

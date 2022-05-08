@@ -67,9 +67,8 @@ export const convertGiveCommandToSummonCommand = (giveCommand) => {
  */
 export const convertSummonCommandToGiveCommand = (summonCommand) => {
 
-  const regex = new RegExp('id: ?"(.*)", ?Count:(\\d+b), ?tag:(\\{.*) ?\\}', 'gm')
+  const regex = new RegExp('id: ?"(.*)", ?Count:(\\d+b)(, ?tag:\\{.*)? ?\\}', 'gm')
 
-  const str = `/summon item ~ ~ ~ {Item:{id:"minecraft:torch",Count:1b,tag:{display:{Name:'{"text":"Torcia Bella"}',Lore:['{"text":"Test"}']},HideFlags:1,tags:1b}}}`;
   let resultRegex;
   let giveCommand = "";
   while ((resultRegex = regex.exec(summonCommand)) !== null) {
@@ -78,10 +77,6 @@ export const convertSummonCommandToGiveCommand = (summonCommand) => {
       regex.lastIndex++;
     }
 
-    // The result can be accessed through the `m`-variable.
-    resultRegex.forEach((match, groupIndex) => {
-      console.log(`Found match, group ${groupIndex}: ${match}`);
-    });
 
     resultRegex.groups = {
       item: resultRegex[1],
@@ -89,15 +84,20 @@ export const convertSummonCommandToGiveCommand = (summonCommand) => {
       itemTag: resultRegex[3],
     };
 
+
     const item = normalizeMinecraftID(resultRegex.groups.item);
     const itemCount = resultRegex.groups.itemCount;
     const itemTag = resultRegex.groups.itemTag;
 
-    giveCommand = `give @p ${item}${itemTag.substring(0, itemTag.length - 1)} ${itemCount.replace(/b/gi, "")}`;
 
+    if (itemTag)
+      giveCommand = `give @p ${item}${itemTag.replace(", tag:", "").replace("}}", "}")} ${itemCount.replace(/b/gi, "")}`;
+    else
+      giveCommand = `give @p ${item} ${itemCount.replace(/b/gi, "")}`;
+
+
+    return giveCommand;
   }
-
-  return giveCommand;
 
 };
 
