@@ -6,9 +6,11 @@ import { homedir } from "os"
 import { dirname, join } from "path"
 import { parseMCTemplate } from "../parser.js";
 import { fileURLToPath } from 'url'
+import dir from "node-dir"
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
+
+export const __filename = fileURLToPath(import.meta.url)
+export const __dirname = dirname(__filename)
 
 
 export const showGreenMessage = (message) => {
@@ -210,4 +212,43 @@ export const readTemplateFile = (directory, namespace) => {
   }
 
   return files.length > 0 ? files : [];
+}
+
+
+/**
+ * 
+ * @param {string} startPath The path to start from
+ * @returns the path to the "Functions" folder
+ */
+export const findFunctionsFolder = async (startPath) => {
+
+  const files = readdirSync(startPath, { withFileTypes: true });
+
+  for (const file of files) {
+    const filePath = join(startPath, file.name);
+    if (file.isDirectory()) {
+      if (file.name === "functions") {
+        return filePath;
+      } else {
+        const result = await findFunctionsFolder(filePath);
+        if (result) {
+          return result;
+        }
+      }
+    }
+  }
+
+}
+
+export const checkForMetaFile = (path) => {
+  // controlla se è presente un file con estensione .mcmeta, se è presente lo ritorna true, altrimenti false
+  const isMeta = existsSync(join(process.cwd(), 'pack.mcmeta'));
+
+  if (isMeta) {
+    return true;
+  }
+  else {
+    console.log(chalk.red("[ERROR]: pack.mcmeta not found"));
+    return false;
+  }
 }

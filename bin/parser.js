@@ -45,3 +45,125 @@ export const parseMCTemplate = (text, namespace) => {
 
 	return templateObject;
 }
+
+/*
+The file has this structure
+S S S
+S S S
+S S S
+---
+S S S
+S A S
+S S S
+---
+S S S
+S S S
+S S S
+===
+S minecraft:stone
+A minecraft:air
+*/
+
+
+/**
+ * 
+ * @param {string} text the text take from the structure templates folder
+ * @returns {string} the setblock code for the structure
+ */
+export const parseStructureTemplate = (text) => {
+
+	const splittedText = text.split("\n");
+	const symbolsDictionary = getBlocksId(splittedText, splittedText.length - 1, []);
+	let coords = {
+		x: 0,
+		y: 0,
+		z: 0
+	}
+
+	let ignoreAll = false;
+
+	let structure = "";
+
+	splittedText.forEach(line => {
+
+		if (line == "")
+			return;
+
+		if (line.startsWith("---")) {
+			coords = { ...coords, y: coords.y + 1 };
+			return;
+		}
+
+		if (line.startsWith("===")) {
+			ignoreAll = true;
+		}
+
+
+		if (!ignoreAll) {
+			structure += convertSymbolsIntoCommand(symbolsDictionary, coords, line) + "\n";
+			coords = { ...coords, z: coords.z + 1 };
+		}
+
+	});
+
+	return structure;
+}
+
+/**
+ * 
+ * @param {{x:number, y:number, z:number}} coords 
+ * @param {string} id 
+ * @returns 
+ */
+const createSetBlock = (coords, id) => {
+	return `setblock ~${coords.x} ~${coords.y} ~${coords.z} ${id}`;
+}
+
+const convertSymbolsIntoCommand = (symbolsDictionary, coords, line) => {
+
+	const splittedLine = line.trim().split(" ");
+
+	let command = "";
+
+	splittedLine.forEach((symbol, index) => {
+
+		if (!symbolsDictionary[symbol])
+			return;
+
+		command += `${createSetBlock({ ...coords, x: coords.x + index }, symbolsDictionary[symbol])}\n\n`;
+	});
+
+	console.log("COMMAND")
+	console.log(command);
+	console.log("--------")
+
+	return command;
+}
+
+/**
+ * 
+ * @param {string[]} lines 
+ * @param {number} i
+ * @param {{string, string}[]} blockIds
+ * @returns {{string, string}[]} outputIds
+ */
+const getBlocksId = (lines, i, blockIds) => {
+
+	if (i == 0)
+		throw new Error("The file is not in the correct format");
+
+	if (lines[i].startsWith("---")) {
+		throw new Error("The file is not in the correct format");
+	}
+
+	if (lines[i].startsWith("==="))
+		return blockIds;
+
+	if (lines[i] == "")
+		return getBlocksId(lines, i - 1, blockIds);
+
+	const splittedLine = lines[i].trim().split(" ");
+	blockIds[splittedLine[0]] = splittedLine[1];
+	i--;
+	return getBlocksId(lines, i, blockIds);
+}
