@@ -6,14 +6,22 @@ import path from "path";
 import chalk from "chalk";
 import { parseStructureTemplate } from "../parser.js";
 
-const { blue, bold, red } = chalk;
+const { red } = chalk;
 
 export const run = async () => {
 
     checkForMetaFile(process.cwd());
 
-    if (!existsSync(path.join(process.cwd(), "./structure"))) {
-        console.log(red(`The structure folder doesn't exist.`));
+    if (!existsSync(path.join(process.cwd(), "./structures"))) {
+        console.log(red(`The structures folder doesn't exist here. Make sure you are in the root of your datapack (where is the .mcmeta file).`));
+        return;
+    }
+
+    const structureListFromFolder = getStructureFromStructureFolder().map(trimExtensionFromFile);
+
+
+    if (structureListFromFolder.length === 0) {
+        console.log(red(`There are no structure files (.mcs) in the structure folder.`));
         return;
     }
 
@@ -22,23 +30,38 @@ export const run = async () => {
             type: "list",
             name: "structure",
             message: "What structure template would you like to convert?",
-            choices: getStructureFromStructureFolder().map(trimExtensionFromFile)
+            choices: structureListFromFolder,
+            validate: function (value) {
+                if (value.length) {
+                    return true;
+                } else {
+                    return "Please select a structure template.";
+                }
+            }
         }
     ])
 
-    const structureName = answers.structure;
+    const structureName = await answers.structure;
 
-    const structureCode = readFileSync('structure/' + structureName + '.mcs', 'utf8');
+    const structureCode = readFileSync('structures/' + structureName + '.mcs', 'utf8');
 
-    generate(parseStructureTemplate(structureCode), path.join(await findFunctionsFolder(process.cwd()), structureName + ".mcfunction"));
+    const functionFolderPath = await findFunctionsFolder(process.cwd());
+
+    generate(parseStructureTemplate(structureCode), path.join(functionFolderPath, structureName + ".mcfunction"));
 
 }
 
 const getStructureFromStructureFolder = () => {
-    const fetchedStructure = readdirSync(path.join(process.cwd(), "./structure")).filter(file => file.endsWith(".mcs"));
+    const fetchedStructure = readdirSync(path.join(process.cwd(), "./structures")).filter(file => file.endsWith(".mcs"));
     return fetchedStructure;
 }
 
+
+/**
+ * Write the structure to the given file
+ * @param {string} structureCode 
+ * @param {string} path 
+ */
 const generate = (structureCode, path) => {
 
     try {

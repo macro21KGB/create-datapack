@@ -120,6 +120,7 @@ export const getGeneralConfig = async () => {
       type: "list",
       message: "Version of minecraft",
       choices: [
+        { name: "1.19.x", value: "9" },
         { name: "1.18.x", value: "8" },
         { name: "1.17.x", value: "7" },
         { name: "1.16.x", value: "6" },
@@ -227,6 +228,11 @@ export const findFunctionsFolder = async (startPath) => {
   for (const file of files) {
     const filePath = join(startPath, file.name);
     if (file.isDirectory()) {
+
+      if (file.name === "minecraft") {
+        continue;
+      }
+
       if (file.name === "functions") {
         return filePath;
       } else {
@@ -240,8 +246,14 @@ export const findFunctionsFolder = async (startPath) => {
 
 }
 
+
+/**
+ * Controlla se è presente un file con estensione .mcmeta, se è presente lo ritorna true, altrimenti false
+ * 
+ * @param {string} path 
+ * @returns {bool} true if there is a mcmeta file, false otherwise
+ */
 export const checkForMetaFile = (path) => {
-  // controlla se è presente un file con estensione .mcmeta, se è presente lo ritorna true, altrimenti false
   const isMeta = existsSync(join(process.cwd(), 'pack.mcmeta'));
 
   if (isMeta) {

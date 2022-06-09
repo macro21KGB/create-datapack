@@ -90,7 +90,7 @@ export const parseStructureTemplate = (text) => {
 			return;
 
 		if (line.startsWith("---")) {
-			coords = { ...coords, y: coords.y + 1 };
+			coords = { ...coords, y: coords.y + 1, z: 0 };
 			return;
 		}
 
@@ -132,10 +132,6 @@ const convertSymbolsIntoCommand = (symbolsDictionary, coords, line) => {
 
 		command += `${createSetBlock({ ...coords, x: coords.x + index }, symbolsDictionary[symbol])}\n\n`;
 	});
-
-	console.log("COMMAND")
-	console.log(command);
-	console.log("--------")
 
 	return command;
 }
