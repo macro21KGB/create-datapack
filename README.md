@@ -27,12 +27,16 @@ or
 ```
 npx create-datapack
 ```
+You can also see more info with
+```
+create-datapack --help
+```
 
-# NEW MODULES FEATURES
+# AVAILABLE MODULES
 
 Now with this command you can access different modules for any occasion
 
-- The **Structure-Generator**, It will create from a template (see below), a mcfunction with the all the necessary setblock call, (the file are with .mcs extension)
+- The **Structure-Generator**, It will generate a structure given from a template (see below), you simply create in the root directory of your datapack, a "structures" folder and the structure file (the file are with .mcs extension)
 
 - The **Auto-uninstaller**,It will scan your datapack an create an **uninstall.mcfunction** just for you, (run it in the root directory, where is the pack.mcmeta file)
 
@@ -48,7 +52,7 @@ or
 create-datapack --modules
 ```
 
-# Template System (.mclate)
+# Template System for datapacks template (.mclate)
 
 The templates are written in a **custom language**, it is very **simple** and **easy to use**, below there is an example of everything you can do:
 
@@ -111,7 +115,7 @@ execute as @a[scores={tf_detection=1..}] at @s run scoreboard players set @s tf_
 ===>
 ```
 
-# Template System for Structure (.mcs)
+# Template System for Structures (.mcs)
 The template syntax is very simple and easy to use, you simply create your structure layer by layer.
 
 This schematic will create a 3x3 cube of stone with an hole in the middle:
@@ -132,13 +136,13 @@ S minecraft:stone <-- symbol block_associated_with
 A minecraft:air
 
 ```
-the structre-generator module will create in the function folder a new file named "templatefilenamehere".mcfunction
+the structure-generator module will create in the functions folder a new file named "templatefilenamehere".mcfunction
 
 Also, yeah i can do some check and convert some commands in fill, ecc.. but for now is good enough.
 
 ## Info
 
-You can create all possible files with this system, The **location in the datapack folder structure** part is without error handling so be careful.
+You can create all possible files with the template system, The **location in the datapack folder structure** part is without error handling so be careful.
 
 All the folder paths can be found on the [wiki](https://minecraft.fandom.com/wiki/Data_Pack) and as shown in the example you can create sub folders and **extensions are added automatically**
 

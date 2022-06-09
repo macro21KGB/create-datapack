@@ -31,13 +31,6 @@ export const run = async () => {
             name: "structure",
             message: "What structure template would you like to convert?",
             choices: structureListFromFolder,
-            validate: function (value) {
-                if (value.length) {
-                    return true;
-                } else {
-                    return "Please select a structure template.";
-                }
-            }
         }
     ])
 
