@@ -254,12 +254,18 @@ export const findFunctionsFolder = async (startPath) => {
  * @returns {bool} true if there is a mcmeta file, false otherwise
  */
 export const checkForMetaFile = (path) => {
-  const isMeta = existsSync(join(process.cwd(), 'pack.mcmeta'));
 
-  if (isMeta) {
-    return true;
-  }
-  else {
+  try {
+    const isMeta = existsSync(join(process.cwd(), 'pack.mcmeta'));
+
+    if (isMeta) {
+      return true;
+    }
+    else {
+      console.log(chalk.red("[ERROR]: pack.mcmeta not found"));
+      return false;
+    }
+  } catch (error) {
     console.log(chalk.red("[ERROR]: pack.mcmeta not found"));
     return false;
   }

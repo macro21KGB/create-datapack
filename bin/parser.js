@@ -110,15 +110,22 @@ export const parseStructureTemplate = (text) => {
 }
 
 /**
- * 
+ * create the setblock command
  * @param {{x:number, y:number, z:number}} coords 
  * @param {string} id 
- * @returns 
+ * @returns {string} the setblock command
  */
 const createSetBlock = (coords, id) => {
 	return `setblock ~${coords.x} ~${coords.y} ~${coords.z} ${id}`;
 }
 
+/**
+ * 
+ * @param {*} symbolsDictionary 
+ * @param {{x: number, y:number }} coords 
+ * @param {string} line  
+ * @returns {string} the setblock command
+ */
 const convertSymbolsIntoCommand = (symbolsDictionary, coords, line) => {
 
 	const splittedLine = line.trim().split(" ");
@@ -140,8 +147,8 @@ const convertSymbolsIntoCommand = (symbolsDictionary, coords, line) => {
  * 
  * @param {string[]} lines 
  * @param {number} i
- * @param {{string, string}[]} blockIds
- * @returns {{string, string}[]} outputIds
+ * @param {{string: string}[]} blockIds
+ * @returns {{string: string}[]} outputIds
  */
 const getBlocksId = (lines, i, blockIds) => {
 

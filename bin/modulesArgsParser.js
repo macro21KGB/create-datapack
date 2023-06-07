@@ -1,5 +1,4 @@
 import chalk from "chalk";
-const { blue, bold, red } = chalk;
 import { readdirSync } from "fs";
 
 import { trimExtensionFromFile } from "./utils/stringUtils.js"

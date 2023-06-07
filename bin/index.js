@@ -86,9 +86,6 @@ prompt({
     generateDirectoryStructure(answers, templateData.templateInUse);
   });
 
-
-
-
 /**
  *
  * @param {Object} data
