@@ -9,7 +9,7 @@ export const run = async () => {
     {
       type: "input",
       name: "command",
-      message: "What command would you like to convert?",
+      message: "What command would you like to convert? (pre 1.20.3)",
       validate: function (value) {
 
         if (value.length == 0)

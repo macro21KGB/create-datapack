@@ -120,6 +120,8 @@ export const getGeneralConfig = async () => {
       type: "list",
       message: "Version of minecraft",
       choices: [
+        { name: "1.20.5-1.20.6", value: "41" },
+        { name: "1.20.3-1.20.4", value: "26" },
         { name: "1.19.4", value: "12" },
         { name: "1.19-1.19.3", value: "10" },
         { name: "1.18.2", value: "9" },
