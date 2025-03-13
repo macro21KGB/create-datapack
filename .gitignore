@@ -118,3 +118,4 @@ dist
 .pnp.*
 test/
 Default_Datapack/
+versions.json

@@ -7,6 +7,7 @@ import { dirname, join } from "path"
 import { parseMCTemplate } from "../parser.js";
 import { fileURLToPath } from 'url'
 import dir from "node-dir"
+import { fetchDataPackVersion } from "../fetchers.js"
 
 
 export const __filename = fileURLToPath(import.meta.url)
@@ -115,17 +116,18 @@ const normalizeMinecraftID = (id) => {
 
 
 export const getGeneralConfig = async () => {
+  const datapackVersions = await fetchDataPackVersion()
   const answers = await inquirer.prompt([
     {
       type: "list",
       message: "Version of minecraft",
       choices: [
-        { name: "1.20.5-1.20.6", value: "41" },
-        { name: "1.20.3-1.20.4", value: "26" },
-        { name: "1.19.4", value: "12" },
-        { name: "1.19-1.19.3", value: "10" },
-        { name: "1.18.2", value: "9" },
-        { name: "1.18-18.1", value: "8" },
+        ...datapackVersions.reverse().map(elem => {
+          return {
+            name: elem.range,
+            value: elem.value
+          }
+        })
       ],
       name: "version",
     },
